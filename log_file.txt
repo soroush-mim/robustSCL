@@ -1,0 +1,325 @@
+initial accuracy: 86.00%
+apgd-ce - 1/2 - 75 out of 500 successfully perturbed
+apgd-ce - 2/2 - 60 out of 360 successfully perturbed
+robust accuracy after APGD-CE: 72.50% (total time 49.7 s)
+max Linf perturbation: 2.42907, nan in tensor: 0, max: 2.75373, min: -2.42907
+robust accuracy: 72.50%
+initial accuracy: 86.00%
+apgd-ce - 1/2 - 74 out of 500 successfully perturbed
+apgd-ce - 2/2 - 55 out of 360 successfully perturbed
+robust accuracy after APGD-CE: 73.10% (total time 9.8 s)
+apgd-t - 1/2 - 16 out of 500 successfully perturbed
+apgd-t - 2/2 - 14 out of 231 successfully perturbed
+robust accuracy after APGD-T: 70.10% (total time 100.5 s)
+fab-t - 1/2 - 2 out of 500 successfully perturbed
+fab-t - 2/2 - 0 out of 201 successfully perturbed
+robust accuracy after FAB-T: 69.90% (total time 240.4 s)
+square - 1/2 - 4 out of 500 successfully perturbed
+square - 2/2 - 0 out of 199 successfully perturbed
+robust accuracy after SQUARE: 69.50% (total time 448.1 s)
+Warning: Square Attack has decreased the robust accuracy of 0.40%. This might indicate that the robustness evaluation using AutoAttack is unreliable. Consider running Square Attack with more iterations and restarts or an adaptive attack. See flags_doc.md for details.
+max Linf perturbation: 2.42907, nan in tensor: 0, max: 2.75373, min: -2.42907
+robust accuracy: 69.50%
+initial accuracy: 84.49%
+apgd-ce - 1/17 - 495 out of 500 successfully perturbed
+apgd-ce - 2/17 - 493 out of 500 successfully perturbed
+apgd-ce - 3/17 - 491 out of 500 successfully perturbed
+apgd-ce - 4/17 - 489 out of 500 successfully perturbed
+apgd-ce - 5/17 - 491 out of 500 successfully perturbed
+apgd-ce - 6/17 - 487 out of 500 successfully perturbed
+apgd-ce - 7/17 - 486 out of 500 successfully perturbed
+apgd-ce - 8/17 - 481 out of 500 successfully perturbed
+apgd-ce - 9/17 - 486 out of 500 successfully perturbed
+apgd-ce - 10/17 - 494 out of 500 successfully perturbed
+apgd-ce - 11/17 - 492 out of 500 successfully perturbed
+apgd-ce - 12/17 - 482 out of 500 successfully perturbed
+apgd-ce - 13/17 - 482 out of 500 successfully perturbed
+apgd-ce - 14/17 - 492 out of 500 successfully perturbed
+apgd-ce - 15/17 - 487 out of 500 successfully perturbed
+apgd-ce - 16/17 - 492 out of 500 successfully perturbed
+apgd-ce - 17/17 - 438 out of 449 successfully perturbed
+robust accuracy after APGD-CE: 1.91% (total time 207.7 s)
+max Linf perturbation: 0.03137, nan in tensor: 0, max: 1.00000, min: 0.00000
+robust accuracy: 1.91%
+initial accuracy: 84.79%
+apgd-ce - 1/17 - 76 out of 500 successfully perturbed
+apgd-ce - 2/17 - 79 out of 500 successfully perturbed
+apgd-ce - 3/17 - 73 out of 500 successfully perturbed
+apgd-ce - 4/17 - 76 out of 500 successfully perturbed
+apgd-ce - 5/17 - 81 out of 500 successfully perturbed
+apgd-ce - 6/17 - 68 out of 500 successfully perturbed
+apgd-ce - 7/17 - 81 out of 500 successfully perturbed
+apgd-ce - 8/17 - 72 out of 500 successfully perturbed
+apgd-ce - 9/17 - 82 out of 500 successfully perturbed
+apgd-ce - 10/17 - 79 out of 500 successfully perturbed
+apgd-ce - 11/17 - 80 out of 500 successfully perturbed
+apgd-ce - 12/17 - 72 out of 500 successfully perturbed
+apgd-ce - 13/17 - 84 out of 500 successfully perturbed
+apgd-ce - 14/17 - 86 out of 500 successfully perturbed
+apgd-ce - 15/17 - 85 out of 500 successfully perturbed
+apgd-ce - 16/17 - 86 out of 500 successfully perturbed
+apgd-ce - 17/17 - 83 out of 479 successfully perturbed
+robust accuracy after APGD-CE: 71.36% (total time 425.1 s)
+max Linf perturbation: 2.42907, nan in tensor: 0, max: 2.75373, min: -2.42907
+robust accuracy: 71.36%
+initial accuracy: 84.79%
+apgd-ce - 1/17 - 493 out of 500 successfully perturbed
+apgd-ce - 2/17 - 492 out of 500 successfully perturbed
+apgd-ce - 3/17 - 488 out of 500 successfully perturbed
+apgd-ce - 4/17 - 489 out of 500 successfully perturbed
+apgd-ce - 5/17 - 490 out of 500 successfully perturbed
+apgd-ce - 6/17 - 490 out of 500 successfully perturbed
+apgd-ce - 7/17 - 487 out of 500 successfully perturbed
+apgd-ce - 8/17 - 481 out of 500 successfully perturbed
+apgd-ce - 9/17 - 482 out of 500 successfully perturbed
+apgd-ce - 10/17 - 496 out of 500 successfully perturbed
+apgd-ce - 11/17 - 489 out of 500 successfully perturbed
+apgd-ce - 12/17 - 486 out of 500 successfully perturbed
+apgd-ce - 13/17 - 487 out of 500 successfully perturbed
+apgd-ce - 14/17 - 495 out of 500 successfully perturbed
+apgd-ce - 15/17 - 487 out of 500 successfully perturbed
+apgd-ce - 16/17 - 489 out of 500 successfully perturbed
+apgd-ce - 17/17 - 469 out of 479 successfully perturbed
+robust accuracy after APGD-CE: 1.89% (total time 223.6 s)
+max Linf perturbation: 0.03137, nan in tensor: 0, max: 1.00000, min: 0.00000
+robust accuracy: 1.89%
+initial accuracy: 84.82%
+apgd-ce - 1/17 - 493 out of 500 successfully perturbed
+apgd-ce - 2/17 - 492 out of 500 successfully perturbed
+apgd-ce - 3/17 - 488 out of 500 successfully perturbed
+apgd-ce - 4/17 - 487 out of 500 successfully perturbed
+apgd-ce - 5/17 - 490 out of 500 successfully perturbed
+apgd-ce - 6/17 - 490 out of 500 successfully perturbed
+apgd-ce - 7/17 - 487 out of 500 successfully perturbed
+apgd-ce - 8/17 - 480 out of 500 successfully perturbed
+apgd-ce - 9/17 - 482 out of 500 successfully perturbed
+apgd-ce - 10/17 - 497 out of 500 successfully perturbed
+apgd-ce - 11/17 - 490 out of 500 successfully perturbed
+apgd-ce - 12/17 - 485 out of 500 successfully perturbed
+apgd-ce - 13/17 - 485 out of 500 successfully perturbed
+apgd-ce - 14/17 - 496 out of 500 successfully perturbed
+apgd-ce - 15/17 - 484 out of 500 successfully perturbed
+apgd-ce - 16/17 - 490 out of 500 successfully perturbed
+apgd-ce - 17/17 - 473 out of 482 successfully perturbed
+robust accuracy after APGD-CE: 1.93% (total time 218.6 s)
+max Linf perturbation: 0.03137, nan in tensor: 0, max: 1.00000, min: 0.00000
+robust accuracy: 1.93%
+initial accuracy: 84.79%
+apgd-ce - 1/17 - 128 out of 500 successfully perturbed
+apgd-ce - 2/17 - 130 out of 500 successfully perturbed
+apgd-ce - 3/17 - 116 out of 500 successfully perturbed
+apgd-ce - 4/17 - 130 out of 500 successfully perturbed
+apgd-ce - 5/17 - 127 out of 500 successfully perturbed
+apgd-ce - 6/17 - 115 out of 500 successfully perturbed
+apgd-ce - 7/17 - 127 out of 500 successfully perturbed
+apgd-ce - 8/17 - 119 out of 500 successfully perturbed
+apgd-ce - 9/17 - 132 out of 500 successfully perturbed
+apgd-ce - 10/17 - 116 out of 500 successfully perturbed
+apgd-ce - 11/17 - 125 out of 500 successfully perturbed
+apgd-ce - 12/17 - 126 out of 500 successfully perturbed
+apgd-ce - 13/17 - 134 out of 500 successfully perturbed
+apgd-ce - 14/17 - 138 out of 500 successfully perturbed
+apgd-ce - 15/17 - 142 out of 500 successfully perturbed
+apgd-ce - 16/17 - 130 out of 500 successfully perturbed
+apgd-ce - 17/17 - 124 out of 479 successfully perturbed
+robust accuracy after APGD-CE: 63.20% (total time 403.3 s)
+max Linf perturbation: 2.42907, nan in tensor: 0, max: 2.75373, min: -2.42907
+robust accuracy: 63.20%
+initial accuracy: 75.53%
+apgd-ce - 1/16 - 497 out of 500 successfully perturbed
+apgd-ce - 2/16 - 498 out of 500 successfully perturbed
+apgd-ce - 3/16 - 496 out of 500 successfully perturbed
+apgd-ce - 4/16 - 497 out of 500 successfully perturbed
+initial accuracy: 74.78%
+apgd-ce - 1/15 - 396 out of 500 successfully perturbed
+apgd-ce - 2/15 - 397 out of 500 successfully perturbed
+apgd-ce - 3/15 - 380 out of 500 successfully perturbed
+apgd-ce - 4/15 - 382 out of 500 successfully perturbed
+initial accuracy: 74.78%
+apgd-ce - 1/15 - 184 out of 500 successfully perturbed
+apgd-ce - 2/15 - 180 out of 500 successfully perturbed
+apgd-ce - 3/15 - 163 out of 500 successfully perturbed
+apgd-ce - 4/15 - 179 out of 500 successfully perturbed
+apgd-ce - 5/15 - 178 out of 500 successfully perturbed
+apgd-ce - 6/15 - 175 out of 500 successfully perturbed
+apgd-ce - 7/15 - 168 out of 500 successfully perturbed
+apgd-ce - 8/15 - 174 out of 500 successfully perturbed
+apgd-ce - 9/15 - 207 out of 500 successfully perturbed
+apgd-ce - 10/15 - 187 out of 500 successfully perturbed
+apgd-ce - 11/15 - 191 out of 500 successfully perturbed
+apgd-ce - 12/15 - 182 out of 500 successfully perturbed
+apgd-ce - 13/15 - 183 out of 500 successfully perturbed
+apgd-ce - 14/15 - 169 out of 500 successfully perturbed
+apgd-ce - 15/15 - 175 out of 478 successfully perturbed
+robust accuracy after APGD-CE: 47.83% (total time 350.1 s)
+max Linf perturbation: 0.03137, nan in tensor: 0, max: 1.00000, min: 0.00000
+robust accuracy: 47.83%
+initial accuracy: 74.78%
+apgd-ce - 1/15 - 185 out of 500 successfully perturbed
+apgd-ce - 2/15 - 181 out of 500 successfully perturbed
+apgd-ce - 3/15 - 162 out of 500 successfully perturbed
+apgd-ce - 4/15 - 180 out of 500 successfully perturbed
+apgd-ce - 5/15 - 178 out of 500 successfully perturbed
+apgd-ce - 6/15 - 173 out of 500 successfully perturbed
+apgd-ce - 7/15 - 167 out of 500 successfully perturbed
+apgd-ce - 8/15 - 172 out of 500 successfully perturbed
+apgd-ce - 9/15 - 207 out of 500 successfully perturbed
+apgd-ce - 10/15 - 184 out of 500 successfully perturbed
+apgd-ce - 11/15 - 189 out of 500 successfully perturbed
+apgd-ce - 12/15 - 182 out of 500 successfully perturbed
+apgd-ce - 13/15 - 186 out of 500 successfully perturbed
+apgd-ce - 14/15 - 169 out of 500 successfully perturbed
+apgd-ce - 15/15 - 177 out of 478 successfully perturbed
+robust accuracy after APGD-CE: 47.86% (total time 79.4 s)
+max Linf perturbation: 0.03137, nan in tensor: 0, max: 1.00000, min: 0.00000
+robust accuracy: 47.86%
+initial accuracy: 74.78%
+apgd-ce - 1/15 - 185 out of 500 successfully perturbed
+apgd-ce - 2/15 - 181 out of 500 successfully perturbed
+apgd-ce - 3/15 - 161 out of 500 successfully perturbed
+apgd-ce - 4/15 - 178 out of 500 successfully perturbed
+apgd-ce - 5/15 - 179 out of 500 successfully perturbed
+apgd-ce - 6/15 - 174 out of 500 successfully perturbed
+apgd-ce - 7/15 - 165 out of 500 successfully perturbed
+apgd-ce - 8/15 - 172 out of 500 successfully perturbed
+apgd-ce - 9/15 - 206 out of 500 successfully perturbed
+apgd-ce - 10/15 - 185 out of 500 successfully perturbed
+apgd-ce - 11/15 - 190 out of 500 successfully perturbed
+apgd-ce - 12/15 - 184 out of 500 successfully perturbed
+apgd-ce - 13/15 - 188 out of 500 successfully perturbed
+apgd-ce - 14/15 - 170 out of 500 successfully perturbed
+apgd-ce - 15/15 - 179 out of 478 successfully perturbed
+robust accuracy after APGD-CE: 47.81% (total time 79.3 s)
+apgd-t - 1/10 - 54 out of 500 successfully perturbed
+apgd-t - 2/10 - 53 out of 500 successfully perturbed
+apgd-t - 3/10 - 55 out of 500 successfully perturbed
+apgd-t - 4/10 - 51 out of 500 successfully perturbed
+apgd-t - 5/10 - 48 out of 500 successfully perturbed
+apgd-t - 6/10 - 49 out of 500 successfully perturbed
+apgd-t - 7/10 - 41 out of 500 successfully perturbed
+apgd-t - 8/10 - 56 out of 500 successfully perturbed
+apgd-t - 9/10 - 58 out of 500 successfully perturbed
+apgd-t - 10/10 - 27 out of 281 successfully perturbed
+robust accuracy after APGD-T: 42.89% (total time 557.8 s)
+fab-t - 1/9 - 2 out of 500 successfully perturbed
+fab-t - 2/9 - 4 out of 500 successfully perturbed
+fab-t - 3/9 - 2 out of 500 successfully perturbed
+fab-t - 4/9 - 4 out of 500 successfully perturbed
+fab-t - 5/9 - 0 out of 500 successfully perturbed
+fab-t - 6/9 - 1 out of 500 successfully perturbed
+fab-t - 7/9 - 3 out of 500 successfully perturbed
+fab-t - 8/9 - 2 out of 500 successfully perturbed
+fab-t - 9/9 - 0 out of 289 successfully perturbed
+robust accuracy after FAB-T: 42.71% (total time 1523.3 s)
+square - 1/9 - 0 out of 500 successfully perturbed
+square - 2/9 - 0 out of 500 successfully perturbed
+square - 3/9 - 0 out of 500 successfully perturbed
+square - 4/9 - 0 out of 500 successfully perturbed
+square - 5/9 - 0 out of 500 successfully perturbed
+square - 6/9 - 0 out of 500 successfully perturbed
+square - 7/9 - 0 out of 500 successfully perturbed
+square - 8/9 - 1 out of 500 successfully perturbed
+square - 9/9 - 0 out of 271 successfully perturbed
+robust accuracy after SQUARE: 42.70% (total time 2964.2 s)
+max Linf perturbation: 0.03137, nan in tensor: 0, max: 1.00000, min: 0.00000
+robust accuracy: 42.70%
+initial accuracy: 76.74%
+apgd-ce - 1/16 - 196 out of 500 successfully perturbed
+apgd-ce - 2/16 - 211 out of 500 successfully perturbed
+apgd-ce - 3/16 - 203 out of 500 successfully perturbed
+apgd-ce - 4/16 - 192 out of 500 successfully perturbed
+apgd-ce - 5/16 - 202 out of 500 successfully perturbed
+apgd-ce - 6/16 - 180 out of 500 successfully perturbed
+apgd-ce - 7/16 - 180 out of 500 successfully perturbed
+apgd-ce - 8/16 - 201 out of 500 successfully perturbed
+apgd-ce - 9/16 - 200 out of 500 successfully perturbed
+apgd-ce - 10/16 - 210 out of 500 successfully perturbed
+apgd-ce - 11/16 - 198 out of 500 successfully perturbed
+apgd-ce - 12/16 - 208 out of 500 successfully perturbed
+apgd-ce - 13/16 - 213 out of 500 successfully perturbed
+apgd-ce - 14/16 - 177 out of 500 successfully perturbed
+apgd-ce - 15/16 - 190 out of 500 successfully perturbed
+apgd-ce - 16/16 - 66 out of 174 successfully perturbed
+robust accuracy after APGD-CE: 46.47% (total time 88.3 s)
+max Linf perturbation: 0.03137, nan in tensor: 0, max: 1.00000, min: 0.00000
+robust accuracy: 46.47%
+initial accuracy: 75.99%
+apgd-ce - 1/16 - 208 out of 500 successfully perturbed
+apgd-ce - 2/16 - 212 out of 500 successfully perturbed
+apgd-ce - 3/16 - 210 out of 500 successfully perturbed
+apgd-ce - 4/16 - 201 out of 500 successfully perturbed
+apgd-ce - 5/16 - 201 out of 500 successfully perturbed
+apgd-ce - 6/16 - 187 out of 500 successfully perturbed
+apgd-ce - 7/16 - 189 out of 500 successfully perturbed
+apgd-ce - 8/16 - 195 out of 500 successfully perturbed
+apgd-ce - 9/16 - 220 out of 500 successfully perturbed
+apgd-ce - 10/16 - 202 out of 500 successfully perturbed
+apgd-ce - 11/16 - 199 out of 500 successfully perturbed
+apgd-ce - 12/16 - 213 out of 500 successfully perturbed
+apgd-ce - 13/16 - 222 out of 500 successfully perturbed
+apgd-ce - 14/16 - 190 out of 500 successfully perturbed
+apgd-ce - 15/16 - 202 out of 500 successfully perturbed
+apgd-ce - 16/16 - 44 out of 99 successfully perturbed
+robust accuracy after APGD-CE: 45.04% (total time 123.9 s)
+max Linf perturbation: 0.03137, nan in tensor: 0, max: 1.00000, min: 0.00000
+robust accuracy: 45.04%
+initial accuracy: 76.53%
+apgd-ce - 1/16 - 198 out of 500 successfully perturbed
+apgd-ce - 2/16 - 204 out of 500 successfully perturbed
+apgd-ce - 3/16 - 209 out of 500 successfully perturbed
+apgd-ce - 4/16 - 206 out of 500 successfully perturbed
+apgd-ce - 5/16 - 209 out of 500 successfully perturbed
+apgd-ce - 6/16 - 183 out of 500 successfully perturbed
+apgd-ce - 7/16 - 176 out of 500 successfully perturbed
+apgd-ce - 8/16 - 201 out of 500 successfully perturbed
+apgd-ce - 9/16 - 208 out of 500 successfully perturbed
+apgd-ce - 10/16 - 203 out of 500 successfully perturbed
+apgd-ce - 11/16 - 187 out of 500 successfully perturbed
+apgd-ce - 12/16 - 216 out of 500 successfully perturbed
+apgd-ce - 13/16 - 223 out of 500 successfully perturbed
+apgd-ce - 14/16 - 201 out of 500 successfully perturbed
+apgd-ce - 15/16 - 206 out of 500 successfully perturbed
+apgd-ce - 16/16 - 58 out of 153 successfully perturbed
+robust accuracy after APGD-CE: 45.65% (total time 88.9 s)
+max Linf perturbation: 0.03137, nan in tensor: 0, max: 1.00000, min: 0.00000
+robust accuracy: 45.65%
+initial accuracy: 78.22%
+apgd-ce - 1/16 - 495 out of 500 successfully perturbed
+apgd-ce - 2/16 - 490 out of 500 successfully perturbed
+apgd-ce - 3/16 - 493 out of 500 successfully perturbed
+apgd-ce - 4/16 - 493 out of 500 successfully perturbed
+apgd-ce - 5/16 - 492 out of 500 successfully perturbed
+apgd-ce - 6/16 - 496 out of 500 successfully perturbed
+apgd-ce - 7/16 - 491 out of 500 successfully perturbed
+apgd-ce - 8/16 - 494 out of 500 successfully perturbed
+apgd-ce - 9/16 - 495 out of 500 successfully perturbed
+apgd-ce - 10/16 - 490 out of 500 successfully perturbed
+apgd-ce - 11/16 - 491 out of 500 successfully perturbed
+apgd-ce - 12/16 - 496 out of 500 successfully perturbed
+apgd-ce - 13/16 - 494 out of 500 successfully perturbed
+apgd-ce - 14/16 - 488 out of 500 successfully perturbed
+apgd-ce - 15/16 - 496 out of 500 successfully perturbed
+apgd-ce - 16/16 - 314 out of 322 successfully perturbed
+robust accuracy after APGD-CE: 1.14% (total time 89.2 s)
+max Linf perturbation: 0.03137, nan in tensor: 0, max: 1.00000, min: 0.00000
+robust accuracy: 1.14%
+initial accuracy: 79.16%
+apgd-ce - 1/16 - 195 out of 500 successfully perturbed
+apgd-ce - 2/16 - 216 out of 500 successfully perturbed
+apgd-ce - 3/16 - 208 out of 500 successfully perturbed
+apgd-ce - 4/16 - 206 out of 500 successfully perturbed
+apgd-ce - 5/16 - 209 out of 500 successfully perturbed
+apgd-ce - 6/16 - 195 out of 500 successfully perturbed
+apgd-ce - 7/16 - 192 out of 500 successfully perturbed
+apgd-ce - 8/16 - 195 out of 500 successfully perturbed
+apgd-ce - 9/16 - 222 out of 500 successfully perturbed
+apgd-ce - 10/16 - 208 out of 500 successfully perturbed
+apgd-ce - 11/16 - 211 out of 500 successfully perturbed
+apgd-ce - 12/16 - 213 out of 500 successfully perturbed
+apgd-ce - 13/16 - 205 out of 500 successfully perturbed
+apgd-ce - 14/16 - 212 out of 500 successfully perturbed
+apgd-ce - 15/16 - 202 out of 500 successfully perturbed
+apgd-ce - 16/16 - 170 out of 416 successfully perturbed
+robust accuracy after APGD-CE: 46.57% (total time 90.8 s)
+max Linf perturbation: 0.03137, nan in tensor: 0, max: 1.00000, min: 0.00000
+robust accuracy: 46.57%
