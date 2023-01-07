@@ -15,7 +15,11 @@ import sys
 import time
 
 
+mu = torch.tensor((0.4914, 0.4822, 0.4465)).view(3,1,1).cuda()
+std = torch.tensor((0.2023, 0.1994, 0.2010)).view(3,1,1).cuda()
 
+def normalize(X):
+        return (X - mu)/std
 
 def set_model(opt):
     model = SupConResNet(name=opt.model)
@@ -71,7 +75,7 @@ def train(train_loader, model, classifier, criterion, optimizer, epoch, opt, fre
         # compute loss
         if freeze:
             with torch.no_grad():
-                features = model.encoder(images)
+                features = model.encoder(normalize(images))
         else:
             features = model.encoder(images)
         output = classifier(features.detach())
@@ -196,7 +200,7 @@ def validate(val_loader, model, classifier, criterion, opt):
             bsz = labels.shape[0]
 
             # forward
-            output = classifier(model.encoder(images))
+            output = classifier(model.encoder(normalize(images)))
             loss = criterion(output, labels)
 
             _, predicted = torch.max(output.data, 1)
@@ -225,7 +229,7 @@ def validate(val_loader, model, classifier, criterion, opt):
 
 
 def adv_validate(val_loader, model, classifier, criterion, opt, attack):
-    """validation"""
+    """adv validation"""
     model.eval()
     classifier.eval()
 
@@ -242,7 +246,7 @@ def adv_validate(val_loader, model, classifier, criterion, opt, attack):
 
         # forward
         with torch.no_grad():
-            output = classifier(model.encoder(input_adv))
+            output = classifier(model.encoder(normalize(input_adv)))
             loss = criterion(output, labels)
 
         # update metric

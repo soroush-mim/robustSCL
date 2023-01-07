@@ -95,6 +95,7 @@ def adv_train2(train_loader, model, criterion, optimizer, epoch, opt, multi_atk,
     losses = AverageMeter()
 
     end = time.time()
+    F = []
     for idx, (images, labels) in enumerate(train_loader):
         data_time.update(time.time() - end)
 
@@ -111,7 +112,7 @@ def adv_train2(train_loader, model, criterion, optimizer, epoch, opt, multi_atk,
         warmup_learning_rate(opt, epoch, idx, len(train_loader), optimizer)
         adv_images = multi_atk(images, labels, loss = criterion)
         adv_images.append(images)
-        img_to_use = [0,5,9,10]
+        img_to_use = [7,8,9]
         adv_images = [adv_images[i] for i in img_to_use]
         view_num = len(adv_images)*2
         adv_images = torch.cat(adv_images, dim = 0)
@@ -119,6 +120,7 @@ def adv_train2(train_loader, model, criterion, optimizer, epoch, opt, multi_atk,
         features = model(adv_images)
         fs = torch.split(features, [bsz for i in range(view_num)], dim=0)
         features = torch.cat([f.unsqueeze(1) for f in fs], dim=1) #torch.Size([bsz, 2 (view), 128(feature dim)])
+
         if opt.method == 'SupCon':
             loss = criterion(features, labels) 
         elif opt.method == 'SimCLR':

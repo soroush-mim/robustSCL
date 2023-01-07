@@ -28,10 +28,12 @@ try:
 except ImportError:
     pass
 
+
+
 def parse_option():
     parser = argparse.ArgumentParser('argument for training')
 
-    parser.add_argument('--print_freq', type=int, default=25,
+    parser.add_argument('--print_freq', type=int, default=20,
                         help='print frequency')
     parser.add_argument('--save_freq', type=int, default=100,
                         help='save frequency')
@@ -109,7 +111,7 @@ def parse_option():
     for it in iterations:
         opt.lr_decay_epochs.append(int(it))
 
-    opt.model_name = 'atatckSteps8,7,9,10_{}_lr_{}_decay_{}_bsz_{}_temp_{}_trial_{}without eam'.\
+    opt.model_name = '7,8,9_{}_lr_{}_decay_{}_bsz_{}_temp_{}_trial_{}eam0.996'.\
         format(opt.model, opt.learning_rate,
                opt.weight_decay, opt.batch_size, opt.temp, opt.trial)
 
@@ -122,7 +124,7 @@ def parse_option():
     if opt.warm:
         opt.model_name = '{}_warm'.format(opt.model_name)
         opt.warmup_from = 0.01
-        opt.warm_epochs = 20
+        opt.warm_epochs = 10
         if opt.cosine:
             eta_min = opt.learning_rate * (opt.lr_decay_rate ** 3)
             opt.warmup_to = eta_min + (opt.learning_rate - eta_min) * (
@@ -140,6 +142,19 @@ def parse_option():
 
     return opt
 
+def compare_models(model_1, model_2):
+    models_differ = 0
+    for key_item_1, key_item_2 in zip(model_1.state_dict().items(), model_2.state_dict().items()):
+        if torch.equal(key_item_1[1], key_item_2[1]):
+            pass
+        else:
+            models_differ += 1
+            if (key_item_1[0] == key_item_2[0]):
+                print('Mismtach found at', key_item_1[0])
+            else:
+                raise Exception
+    if models_differ == 0:
+        print('Models match perfectly! :)')
 
 
 def main():
@@ -156,7 +171,8 @@ def main():
     # build optimizer
     optimizer = set_optimizer(opt, model)
 
-    ema = ExponentialMovingAverage(model.parameters(), decay=0.999)
+    # ema = False
+    ema = ExponentialMovingAverage(model.parameters(), decay=0.996)
 
     with open(opt.tb_folder + '/stage1_args.txt', 'w') as f:
         json.dump(opt.__dict__, f, indent=2)
@@ -185,9 +201,9 @@ def main():
         else:
             loss = train(train_loader, model, criterion, optimizer, epoch, opt)
 
-        # if ema:
-        #     copy_of_model_parameters = copy_parameters_from_model(model)
-        #     ema.copy_to(model.parameters())
+        if ema:
+            copy_of_model_parameters = copy_parameters_from_model(model)
+            ema.copy_to(model.parameters())
         
         time2 = time.time()
         print('epoch {}, total time {:.2f}'.format(epoch, time2 - time1))
@@ -201,14 +217,15 @@ def main():
                 opt.save_folder, 'ckpt_epoch_{epoch}.pth'.format(epoch=epoch))
             save_model(model, optimizer, opt, epoch, save_file)
 
-        # if ema:
-        #     copy_parameters_to_model(copy_of_model_parameters, model)
+        if ema:
+            copy_parameters_to_model(copy_of_model_parameters, model)
 
     # save the last model
     save_file = os.path.join(
         opt.save_folder, 'last.pth')
     save_model(model, optimizer, opt, opt.epochs, save_file)
+    # compare_models(model,model1)
 
-
+    
 if __name__ == '__main__':
     main()

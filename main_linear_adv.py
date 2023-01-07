@@ -27,7 +27,7 @@ from adv_train import PGDAttack
 from stage2_utils import *
 
 import os
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+# os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 try:
     import apex
@@ -39,7 +39,7 @@ except ImportError:
 def parse_option():
     parser = argparse.ArgumentParser('argument for training')
 
-    parser.add_argument('--print_freq', type=int, default=50,
+    parser.add_argument('--print_freq', type=int, default=10,
                         help='print frequency')
     parser.add_argument('--save_freq', type=int, default=50,
                         help='save frequency')
@@ -184,47 +184,9 @@ def main():
 
     print('best accuracy: {:.2f}'.format(best_acc))
     print('best adv accuracy: {:.2f}'.format(best_adv_acc))
-    torch.save(best_state , 'CLA bsz300 diff atck steps.pth')
-
-
-    # optimizer = optim.SGD([ {'params': classifier.parameters()}, {'params': model.encoder.parameters()}],
-    #                     lr= 0.05,
-    #                     momentum=opt.momentum,
-    #                     weight_decay=opt.weight_decay)
-    # best_acc = 0
-    # best_adv_acc = 0
-    #     # training routine
-    # for epoch in range(1, 11):
-    #     # adjust_learning_rate(opt, optimizer, epoch)
-
-    #     # train for one epoch
-    #     time1 = time.time()
-    #     # loss, acc = PGDtrain(train_loader, model, classifier, criterion,
-    #     #                   optimizer, epoch, opt, train_attack)
-
-    #     loss, acc = train(train_loader, model, classifier, criterion, optimizer, epoch, opt, freeze=False)
-
-    #     time2 = time.time()
-    #     print('Train epoch {}, total time {:.2f}, accuracy:{:.2f}'.format(
-    #         epoch, time2 - time1, acc))
-
-    #     # eval for one epoch
-    #     clean_loss, val_acc = validate(val_loader, model, classifier, criterion, opt)
-    #     if val_acc > best_acc:
-    #         best_acc = val_acc
-
-    #     adv_loss, adv_val_acc = adv_validate(val_loader, model, classifier, criterion, opt, test_attack)
-    #     if adv_val_acc > best_adv_acc:
-    #         best_adv_acc = adv_val_acc
-    #         best_state = deepcopy(classifier.state_dict()) 
-
-        
-    #     logger.log_value('clean loss', clean_loss, epoch)
-    #     logger.log_value('adv loss', adv_loss, epoch)
-    #     logger.log_value('clean acc', val_acc, epoch)
-    #     logger.log_value('adv acc', adv_val_acc, epoch)
-    #     logger.log_value('learning_rate', optimizer.param_groups[0]['lr'], epoch)
+    torch.save(best_state , 'satge2_7,8,9_resnet18_lr_0.1_decay_0.0005_bsz_200_temp_0.07_trial_0eam0.996_cosine.pth')
 
 
 if __name__ == '__main__':
     main()
+    
