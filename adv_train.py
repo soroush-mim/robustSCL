@@ -144,7 +144,7 @@ class PGDAttack(PGD):
 
         for _ in range(self.steps):
             adv_images.requires_grad = True
-            outputs = self.classifier(self.model.encoder(normalize(adv_images)))
+            outputs = self.classifier(self.model.encoder(adv_images))
 
             cost = loss(outputs, labels)
 

@@ -39,8 +39,8 @@ def trades_loss(model, classifier,
         for _ in range(perturb_steps):
             x_adv.requires_grad_()
             with torch.enable_grad():
-                loss_kl = criterion_kl(F.log_softmax(classifier(model.encoder(normalize(x_adv))), dim=1),
-                                       F.softmax(classifier(model.encoder(normalize(x_natural))), dim=1))
+                loss_kl = criterion_kl(F.log_softmax(classifier(model.encoder(x_adv)), dim=1),
+                                       F.softmax(classifier(model.encoder(x_natural)), dim=1))
             grad = torch.autograd.grad(loss_kl, [x_adv])[0]
             x_adv = x_adv.detach() + step_size * torch.sign(grad.detach())
             x_adv = torch.min(torch.max(x_adv, x_natural - epsilon), x_natural + epsilon)
@@ -58,8 +58,8 @@ def trades_loss(model, classifier,
             # optimize
             optimizer_delta.zero_grad()
             with torch.enable_grad():
-                loss = (-1) * criterion_kl(F.log_softmax(classifier(model.encoder(normalize(adv))), dim=1),
-                                           F.softmax(classifier(model.encoder(normalize(x_natural))), dim=1))
+                loss = (-1) * criterion_kl(F.log_softmax(classifier(model.encoder(adv)), dim=1),
+                                           F.softmax(classifier(model.encoder(x_natural)), dim=1))
             loss.backward()
             # renorming gradient
             grad_norms = delta.grad.view(batch_size, -1).norm(p=2, dim=1)
@@ -83,8 +83,8 @@ def trades_loss(model, classifier,
     optimizer.zero_grad()
     # calculate robust loss
     with torch.no_grad():
-        nat_features = model.encoder(normalize(x_natural))
-        adv_features = model.encoder(normalize(x_adv))
+        nat_features = model.encoder(x_natural)
+        adv_features = model.encoder(x_adv)
     output = classifier(nat_features.detach())
     #logits = model(x_natural)
     loss_natural = F.cross_entropy(output, y)

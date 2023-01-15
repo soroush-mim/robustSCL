@@ -12,11 +12,12 @@ class SupConLoss(nn.Module):
     """Supervised Contrastive Learning: https://arxiv.org/pdf/2004.11362.pdf.
     It also supports the unsupervised contrastive loss in SimCLR"""
     def __init__(self, temperature=0.07, contrast_mode='all',
-                 base_temperature=0.07):
+                 base_temperature=0.07, V2 = False):
         super(SupConLoss, self).__init__()
         self.temperature = temperature
         self.contrast_mode = contrast_mode
         self.base_temperature = base_temperature
+        self.V2 = V2
 
     def forward(self, features, labels=None, mask=None):
         """Compute loss for model. If both `labels` and `mask` are None,
@@ -32,7 +33,6 @@ class SupConLoss(nn.Module):
             A loss scalar.
         """
 
-        #probably i have to change mask
         device = (torch.device('cuda')
                   if features.is_cuda
                   else torch.device('cpu'))
@@ -44,6 +44,7 @@ class SupConLoss(nn.Module):
             features = features.view(features.shape[0], features.shape[1], -1)
 
         batch_size = features.shape[0]
+        steps = int(features.shape[1]/2)
         if labels is not None and mask is not None:
             raise ValueError('Cannot define both `labels` and `mask`')
         elif labels is None and mask is None:
@@ -57,8 +58,8 @@ class SupConLoss(nn.Module):
         else:
             mask = mask.float().to(device)
 
-        contrast_count = features.shape[1] #num views
-        contrast_feature = torch.cat(torch.unbind(features, dim=1), dim=0) #torch.Size([2*bsz, f dim])
+        contrast_count = features.shape[1] #num views , 2* steps
+        contrast_feature = torch.cat(torch.unbind(features, dim=1), dim=0) #torch.Size([num_views*bsz, f dim])
         # first bsz rows -> first view
         # sec bsz rows -> sec view
         if self.contrast_mode == 'one':
@@ -80,6 +81,10 @@ class SupConLoss(nn.Module):
 
         # tile mask
         mask = mask.repeat(anchor_count, contrast_count)
+        if self.V2:
+            i = torch.eye(batch_size*2).to(device)
+            i = i.repeat(steps,steps)
+            mask = mask + i
         # mask-out self-contrast cases, sefr kardan ghotr
         logits_mask = torch.scatter(
             torch.ones_like(mask),

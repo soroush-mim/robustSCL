@@ -9,6 +9,33 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+def normalize_fn(tensor, mean, std):
+    """Differentiable version of torchvision.functional.normalize"""
+    # here we assume the color channel is in at dim=1
+    mean = mean[None, :, None, None]
+    std = std[None, :, None, None]
+    return tensor.sub(mean).div(std)
+
+
+class NormalizeByChannelMeanStd(nn.Module):
+    def __init__(self, mean, std):
+        super(NormalizeByChannelMeanStd, self).__init__()
+        if not isinstance(mean, torch.Tensor):
+            mean = torch.tensor(mean)
+        if not isinstance(std, torch.Tensor):
+            std = torch.tensor(std)
+        self.register_buffer("mean", mean)
+        self.register_buffer("std", std)
+
+    def forward(self, tensor):
+        return normalize_fn(tensor, self.mean, self.std)
+
+    def extra_repr(self):
+        return 'mean={}, std={}'.format(self.mean, self.std)
+
+
+
+
 class BasicBlock(nn.Module):
     expansion = 1
 
@@ -77,6 +104,10 @@ class ResNet(nn.Module):
         super(ResNet, self).__init__()
         self.in_planes = 64
 
+        self.normalize = NormalizeByChannelMeanStd(
+            mean=[0.4914, 0.4822, 0.4465], std=[0.2023, 0.1994, 0.2010])
+            # mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+
         self.conv1 = nn.Conv2d(in_channel, 64, kernel_size=3, stride=1, padding=1,
                                bias=False)
         self.bn1 = nn.BatchNorm2d(64)
@@ -114,6 +145,7 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x, layer=100):
+        x = self.normalize(x)
         out = F.relu(self.bn1(self.conv1(x)))
         out = self.layer1(out)
         out = self.layer2(out)
@@ -180,14 +212,14 @@ class SupConResNet(nn.Module):
             raise NotImplementedError(
                 'head not supported: {}'.format(head))
 
-        self.mu = torch.tensor((0.4914, 0.4822, 0.4465)).view(3,1,1).cuda()
-        self.std = torch.tensor((0.2023, 0.1994, 0.2010)).view(3,1,1).cuda()
+    #     self.mu = torch.tensor((0.4914, 0.4822, 0.4465)).view(3,1,1).cuda()
+    #     self.std = torch.tensor((0.2023, 0.1994, 0.2010)).view(3,1,1).cuda()
 
-    def normalize(self, X):
-        return (X - self.mu)/self.std
+    # def normalize(self, X):
+    #     return (X - self.mu)/self.std
 
     def forward(self, x):
-        x = self.normalize(x)
+        # x = self.normalize(x)
         feat = self.encoder(x)
         feat = F.normalize(self.head(feat), dim=1)
         return feat

@@ -75,7 +75,7 @@ def train(train_loader, model, classifier, criterion, optimizer, epoch, opt, fre
         # compute loss
         if freeze:
             with torch.no_grad():
-                features = model.encoder(normalize(images))
+                features = model.encoder(images)
         else:
             features = model.encoder(images)
         output = classifier(features.detach())
@@ -200,7 +200,7 @@ def validate(val_loader, model, classifier, criterion, opt):
             bsz = labels.shape[0]
 
             # forward
-            output = classifier(model.encoder(normalize(images)))
+            output = classifier(model.encoder(images))
             loss = criterion(output, labels)
 
             _, predicted = torch.max(output.data, 1)
@@ -246,7 +246,7 @@ def adv_validate(val_loader, model, classifier, criterion, opt, attack):
 
         # forward
         with torch.no_grad():
-            output = classifier(model.encoder(normalize(input_adv)))
+            output = classifier(model.encoder(input_adv))
             loss = criterion(output, labels)
 
         # update metric
