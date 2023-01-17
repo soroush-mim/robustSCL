@@ -9,18 +9,14 @@ import math
 
 import tensorboard_logger as tb_logger
 import torch
-import torch.backends.cudnn as cudnn
-from torchvision import transforms, datasets
 
-from util import TwoCropTransform, AverageMeter
 from util import adjust_learning_rate, warmup_learning_rate
 from util import set_optimizer, save_model
 from util import copy_parameters_from_model, copy_parameters_to_model
-from networks.resnet_big import SupConResNet
-from losses import SupConLoss
-from adv_train import PGDCons, PGDConsMulti
+
+from adv_train import PGDConsMultiOneAug
 from torch_ema import ExponentialMovingAverage
-from stage1_utils import *
+from without_aug_utils import set_loader, set_model, adv_train2
 
 try:
     import apex
@@ -111,7 +107,7 @@ def parse_option():
     for it in iterations:
         opt.lr_decay_epochs.append(int(it))
 
-    opt.model_name = '7,8,9,10_{}_lr_{}_decay_{}_bsz_{}_temp_{}_trial_{}ema996_LOSSV2'.\
+    opt.model_name = 'NO_AUG_7,8,9,10_{}_lr_{}_decay_{}_bsz_{}_temp_{}_trial_{}ema996'.\
         format(opt.model, opt.learning_rate,
                opt.weight_decay, opt.batch_size, opt.temp, opt.trial)
 
@@ -142,19 +138,6 @@ def parse_option():
 
     return opt
 
-def compare_models(model_1, model_2):
-    models_differ = 0
-    for key_item_1, key_item_2 in zip(model_1.state_dict().items(), model_2.state_dict().items()):
-        if torch.equal(key_item_1[1], key_item_2[1]):
-            pass
-        else:
-            models_differ += 1
-            if (key_item_1[0] == key_item_2[0]):
-                print('Mismtach found at', key_item_1[0])
-            else:
-                raise Exception
-    if models_differ == 0:
-        print('Models match perfectly! :)')
 
 
 def main():
@@ -180,11 +163,9 @@ def main():
     # tensorboard
     logger = tb_logger.Logger(logdir=opt.tb_folder, flush_secs=2)
     if ADV_TRAINING:
-        if opt.multi_pgd:
-            atk = PGDConsMulti(model, eps=8./255, alpha=2./225, steps=opt.pgd_train_steps, random_start=True)
 
-        else:
-            atk = PGDCons(model, eps=8./255, alpha=2./225, steps=10, random_start=True)
+        atk = PGDConsMultiOneAug(model, eps=8./255, alpha=2./225, steps=opt.pgd_train_steps, random_start=True)
+
 
     # training routine
     for epoch in range(1, opt.epochs + 1):
@@ -193,13 +174,12 @@ def main():
         # train for one epoch
         time1 = time.time()
         if ADV_TRAINING:
-            if opt.multi_pgd:
-                loss = adv_train2(train_loader, model, criterion, optimizer, epoch, opt, atk, ema)
-            else:
-                print('use multi_pgd')
-                # loss = adv_train1(train_loader, model, criterion, optimizer, epoch, opt, atk)
+            
+            loss = adv_train2(train_loader, model, criterion, optimizer, epoch, opt, atk, ema)
+
         else:
-            loss = train(train_loader, model, criterion, optimizer, epoch, opt)
+            print('use adv training flag')
+            break
 
         if ema:
             copy_of_model_parameters = copy_parameters_from_model(model)
