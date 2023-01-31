@@ -107,7 +107,7 @@ def parse_option():
     for it in iterations:
         opt.lr_decay_epochs.append(int(it))
 
-    opt.model_name = 'NO_AUG_7,8,9,10_{}_lr_{}_decay_{}_bsz_{}_temp_{}_trial_{}ema996'.\
+    opt.model_name = 'ONE_VIEW_7,8,9,10_{}_lr_{}_decay_{}_bsz_{}_temp_{}_trial_{}NOema'.\
         format(opt.model, opt.learning_rate,
                opt.weight_decay, opt.batch_size, opt.temp, opt.trial)
 
@@ -154,8 +154,8 @@ def main():
     # build optimizer
     optimizer = set_optimizer(opt, model)
 
-    # ema = False
-    ema = ExponentialMovingAverage(model.parameters(), decay=0.996)
+    ema = False
+    # ema = ExponentialMovingAverage(model.parameters(), decay=0.996)
 
     with open(opt.tb_folder + '/stage1_args.txt', 'w') as f:
         json.dump(opt.__dict__, f, indent=2)

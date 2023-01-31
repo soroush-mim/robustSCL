@@ -43,7 +43,7 @@ def parse_option():
                         help='print frequency')
     parser.add_argument('--save_freq', type=int, default=50,
                         help='save frequency')
-    parser.add_argument('--batch_size', type=int, default=64,
+    parser.add_argument('--batch_size', type=int, default=128,
                         help='batch_size')
     parser.add_argument('--num_workers', type=int, default=16,
                         help='num of workers to use')
@@ -57,7 +57,7 @@ def parse_option():
                         help='where to decay lr, can be a list')
     parser.add_argument('--lr_decay_rate', type=float, default=0.1,
                         help='decay rate for learning rate')
-    parser.add_argument('--weight_decay', type=float, default=0,
+    parser.add_argument('--weight_decay', type=float, default=0.0005,
                         help='weight decay')
     parser.add_argument('--momentum', type=float, default=0.9,
                         help='momentum')
@@ -184,7 +184,7 @@ def main():
 
     print('best accuracy: {:.2f}'.format(best_acc))
     print('best adv accuracy: {:.2f}'.format(best_adv_acc))
-    torch.save(best_state , 'satge2_7,8,9_resnet18_lr_0.1_decay_0.0005_bsz_200_temp_0.07_trial_0eam0.996_cosine.pth')
+    torch.save(best_state , 'LOSSV2_satge2_7,8,9_10_resnet18_lr_0.1_decay_0.0005_bsz_200_temp_0.07_trial_0_cosine.pth')
 
 
 if __name__ == '__main__':
