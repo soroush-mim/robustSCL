@@ -4,6 +4,7 @@ import math
 import numpy as np
 import torch
 import torch.optim as optim
+from torchvision import transforms
 from torchlars import LARS
 
 
@@ -14,6 +15,15 @@ class TwoCropTransform:
 
     def __call__(self, x):
         return [self.transform(x), self.transform(x)]
+
+class TwoCropTransformPlusOrg:
+    """Create two crops of the same image"""
+    def __init__(self, transform):
+        self.transform = transform
+        self.toTensor = transforms.ToTensor()
+
+    def __call__(self, x):
+        return [self.toTensor(x), self.transform(x), self.transform(x)]
 
 
 class AverageMeter(object):

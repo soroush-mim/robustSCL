@@ -18,7 +18,7 @@ from util import set_optimizer, save_model
 from util import copy_parameters_from_model, copy_parameters_to_model
 from networks.resnet_big import SupConResNet
 from losses import SupConLoss
-from adv_train import PGDCons, PGDConsMulti
+from adv_train import PGDCons, PGDConsMulti, PGDConsMultiWithOrg
 from torch_ema import ExponentialMovingAverage
 from stage1_utils import *
 
@@ -183,7 +183,10 @@ def main():
     logger = tb_logger.Logger(logdir=opt.tb_folder, flush_secs=2)
     if ADV_TRAINING:
         if opt.multi_pgd:
-            atk = PGDConsMulti(model, eps=8./255, alpha=2./225, steps=opt.pgd_train_steps, random_start=True)
+            if opt.add_org_samples:
+                atk = PGDConsMultiWithOrg(model, eps=8./255, alpha=2./225, steps=opt.pgd_train_steps, random_start=True)
+            else:
+                atk = PGDConsMulti(model, eps=8./255, alpha=2./225, steps=opt.pgd_train_steps, random_start=True)
 
         else:
             atk = PGDCons(model, eps=8./255, alpha=2./225, steps=10, random_start=True)
@@ -196,7 +199,10 @@ def main():
         time1 = time.time()
         if ADV_TRAINING:
             if opt.multi_pgd:
-                loss = adv_train2(train_loader, model, criterion, optimizer, epoch, opt, atk, ema)
+                if opt.add_org_samples:
+                    loss = adv_train2_plus_org(train_loader, model, criterion, optimizer, epoch, opt, atk, ema)
+                else:
+                    loss = adv_train2(train_loader, model, criterion, optimizer, epoch, opt, atk, ema)
             else:
                 print('use multi_pgd')
                 # loss = adv_train1(train_loader, model, criterion, optimizer, epoch, opt, atk)
