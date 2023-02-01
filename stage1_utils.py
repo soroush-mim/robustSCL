@@ -67,7 +67,7 @@ def set_loader(opt):
 
 def set_model(opt):
     model = SupConResNet(name=opt.model)
-    criterion = SupConLoss(temperature=opt.temp, V2=True)
+    criterion = SupConLoss(temperature=opt.temp)#, V2=True)
 
     # enable synchronized Batch Normalization
     if opt.syncBN:
@@ -113,6 +113,79 @@ def adv_train2(train_loader, model, criterion, optimizer, epoch, opt, multi_atk,
         model.train()
         adv_images.append(images)
         img_to_use = [7,8,9,10]
+        adv_images = [adv_images[i] for i in img_to_use]
+        view_num = len(adv_images)*2
+        adv_images = torch.cat(adv_images, dim = 0) #size -> (2*bsz*view_num, 3,32,32)
+        # compute loss
+        features = model(adv_images)
+        fs = torch.split(features, [bsz for i in range(view_num)], dim=0) # each f -> bsz*128
+        features = torch.cat([f.unsqueeze(1) for f in fs], dim=1) #torch.Size([bsz, num_view, 128(feature dim)])
+
+        if opt.method == 'SupCon':
+            loss = criterion(features, labels) 
+        elif opt.method == 'SimCLR':
+            loss = criterion(features)
+        else:
+            raise ValueError('contrastive method not supported: {}'.
+                             format(opt.method))
+
+        # update metric
+        losses.update(loss.item(), bsz)
+
+        # SGD
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        if ema:
+            ema.update(model.parameters())
+
+        # measure elapsed time
+        batch_time.update(time.time() - end)
+        end = time.time()
+
+        # print info
+        if (idx + 1) % opt.print_freq == 0:
+            print('Train adv multi: [{0}][{1}/{2}]\t'
+                  'BT {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
+                  'DT {data_time.val:.3f} ({data_time.avg:.3f})\t'
+                  'loss {loss.val:.3f} ({loss.avg:.3f})'.format(
+                   epoch, idx + 1, len(train_loader), batch_time=batch_time,
+                   data_time=data_time, loss=losses))
+            sys.stdout.flush()
+
+    return losses.avg
+
+
+def adv_train2_unadv(train_loader, model, criterion, optimizer, epoch, opt, multi_atk, ema):
+    """one epoch training"""
+    model.train()
+
+    batch_time = AverageMeter()
+    data_time = AverageMeter()
+    losses = AverageMeter()
+
+    end = time.time()
+    
+    for idx, (images, labels) in enumerate(train_loader):
+        data_time.update(time.time() - end)
+
+        images = torch.cat([images[0], images[1]], dim=0) #torch.Size([2*bsz, 3, 32, 32])
+        # [[first view of images],
+        # [second view of images],]
+
+        if torch.cuda.is_available():
+            images = images.cuda(non_blocking=True)
+            labels = labels.cuda(non_blocking=True)
+        bsz = labels.shape[0]
+        
+        # warm-up learning rate
+        warmup_learning_rate(opt, epoch, idx, len(train_loader), optimizer)
+        model.eval()
+        adv_images = multi_atk(images, labels, loss = criterion)
+        model.train()
+        adv_images.append(images)
+        img_to_use = [0,7,8,9,10]
         adv_images = [adv_images[i] for i in img_to_use]
         view_num = len(adv_images)*2
         adv_images = torch.cat(adv_images, dim = 0) #size -> (2*bsz*view_num, 3,32,32)

@@ -92,8 +92,6 @@ def parse_option():
 
     parser.add_argument('--pgd_train_steps', type=int, default=10)
 
-    parser.add_argument('--add_org_samples', action='store_true')
-
     opt = parser.parse_args()
 
     # check if dataset is path that passed required arguments
@@ -113,7 +111,7 @@ def parse_option():
     for it in iterations:
         opt.lr_decay_epochs.append(int(it))
 
-    opt.model_name = '7,8,9,10_{}_lr_{}_decay_{}_bsz_{}_temp_{}_trial_{}ema996_LOSSV2'.\
+    opt.model_name = '7,8,9,10_{}_lr_{}_decay_{}_bsz_{}_temp_{}_trial_{}ema996_plusUNADV'.\
         format(opt.model, opt.learning_rate,
                opt.weight_decay, opt.batch_size, opt.temp, opt.trial)
 
@@ -183,7 +181,7 @@ def main():
     logger = tb_logger.Logger(logdir=opt.tb_folder, flush_secs=2)
     if ADV_TRAINING:
         if opt.multi_pgd:
-            atk = PGDConsMulti(model, eps=8./255, alpha=2./225, steps=opt.pgd_train_steps, random_start=True)
+            atk = PGDConsMulti(model, eps=8./255, alpha=2./225, steps=opt.pgd_train_steps, random_start=True, unadv=True)
 
         else:
             atk = PGDCons(model, eps=8./255, alpha=2./225, steps=10, random_start=True)
@@ -196,7 +194,7 @@ def main():
         time1 = time.time()
         if ADV_TRAINING:
             if opt.multi_pgd:
-                loss = adv_train2(train_loader, model, criterion, optimizer, epoch, opt, atk, ema)
+                loss = adv_train2_unadv(train_loader, model, criterion, optimizer, epoch, opt, atk, ema)
             else:
                 print('use multi_pgd')
                 # loss = adv_train1(train_loader, model, criterion, optimizer, epoch, opt, atk)
