@@ -4,9 +4,11 @@ import sys
 import argparse
 import time
 import math
+from copy import deepcopy
 
 import torch
 import torch.backends.cudnn as cudnn
+from torch.utils.data import DataLoader, SubsetRandomSampler
 
 from main_ce import set_loader
 from util import AverageMeter
@@ -60,6 +62,12 @@ def parse_option():
 
     parser.add_argument('--ckpt', type=str, default='',
                         help='path to pre-trained model')
+    
+    parser.add_argument('--semi', action='store_true',
+                        help='using semi supervised aproach')
+    
+    parser.add_argument('--semi_perc', type=int, default=10,
+                        help='percentage of labels that we wanna use')
 
     opt = parser.parse_args()
 
@@ -229,7 +237,10 @@ def main():
     opt = parse_option()
 
     # build data loader
-    train_loader, val_loader = set_loader(opt)
+    if opt.semi:
+        train_loader, all_train_loader, val_loader = set_loader(opt)
+    else:
+        train_loader, val_loader = set_loader(opt)
 
     # build model and criterion
     model, classifier, criterion = set_model(opt)
@@ -253,8 +264,13 @@ def main():
         loss, val_acc = validate(val_loader, model, classifier, criterion, opt)
         if val_acc > best_acc:
             best_acc = val_acc
+            best_state = deepcopy(classifier.state_dict())
 
     print('best accuracy: {:.2f}'.format(best_acc))
+    if opt.semi:
+        loss, all_train_acc = validate(all_train_loader, model, classifier, criterion, opt)
+        print('loss and acc on all train data:', loss, all_train_acc)
+        torch.save(best_state , f'semi_cifar10_{opt.semi_perc}perc_classifier.pth')
 
 
 if __name__ == '__main__':

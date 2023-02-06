@@ -7,10 +7,13 @@ import argparse
 import time
 import math
 
+import numpy as np
+
 import tensorboard_logger as tb_logger
 import torch
 import torch.backends.cudnn as cudnn
 from torchvision import transforms, datasets
+from torch.utils.data import SubsetRandomSampler
 
 from torchattacks import PGD
 from trades import trades_loss
@@ -160,15 +163,34 @@ def set_loader(opt):
     else:
         raise ValueError(opt.dataset)
 
-    train_sampler = None
-    train_loader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=opt.batch_size, shuffle=(train_sampler is None),
-        num_workers=opt.num_workers, pin_memory=True, sampler=train_sampler)
-    val_loader = torch.utils.data.DataLoader(
-        val_dataset, batch_size=256, shuffle=False,
-        num_workers=8, pin_memory=True)
+    if not opt.semi:
+        train_sampler = None
+        train_loader = torch.utils.data.DataLoader(
+            train_dataset, batch_size=opt.batch_size, shuffle=(train_sampler is None),
+            num_workers=opt.num_workers, pin_memory=True, sampler=train_sampler)
+        val_loader = torch.utils.data.DataLoader(
+            val_dataset, batch_size=256, shuffle=False,
+            num_workers=8, pin_memory=True)
+        return train_loader, val_loader
+    
+    else:
+        perc = opt.semi_perc
+        num_using_labels = int((perc*len(train_dataset))/100)
+        indices = np.random.choice(len(train_dataset), num_using_labels, replace=False)
+        train_sampler = SubsetRandomSampler(indices)
 
-    return train_loader, val_loader
+        train_loader = torch.utils.data.DataLoader(
+            train_dataset, batch_size=opt.batch_size, shuffle=(train_sampler is None),
+            num_workers=opt.num_workers, pin_memory=True, sampler=train_sampler, drop_last=True)
+        val_loader = torch.utils.data.DataLoader(
+            val_dataset, batch_size=256, shuffle=False,
+            num_workers=8, pin_memory=True)
+        all_train_loader = torch.utils.data.DataLoader(
+            train_dataset, batch_size=opt.batch_size, shuffle=True,
+            num_workers=opt.num_workers, pin_memory=True, sampler=None)
+
+
+    return train_loader,all_train_loader, val_loader
 
 
 def set_model(opt):
