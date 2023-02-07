@@ -55,4 +55,4 @@ class psudoSoftLabel_CIFAR10(torchvision.datasets.CIFAR10):
         return img, psudoLabel, real_label
 
 
-# train_datasets_psudolabeled = psudoSoftLabel_CIFAR10(root=args.data, train=True, download=True, transform=transform_train, model=gene_net)
+

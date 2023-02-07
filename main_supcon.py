@@ -94,6 +94,9 @@ def parse_option():
 
     parser.add_argument('--add_org_samples', action='store_true')
 
+    parser.add_argument('--semi', action='store_true',
+                        help='using semi supervised aproach')
+
     opt = parser.parse_args()
 
     # check if dataset is path that passed required arguments
@@ -144,19 +147,7 @@ def parse_option():
 
     return opt
 
-def compare_models(model_1, model_2):
-    models_differ = 0
-    for key_item_1, key_item_2 in zip(model_1.state_dict().items(), model_2.state_dict().items()):
-        if torch.equal(key_item_1[1], key_item_2[1]):
-            pass
-        else:
-            models_differ += 1
-            if (key_item_1[0] == key_item_2[0]):
-                print('Mismtach found at', key_item_1[0])
-            else:
-                raise Exception
-    if models_differ == 0:
-        print('Models match perfectly! :)')
+
 
 
 def main():
@@ -165,7 +156,11 @@ def main():
     ADV_TRAINING = opt.ADV_train
 
     # build data loader
-    train_loader = set_loader(opt)
+    if opt.semi:
+        gen_model = set_semi_model_linear()
+        train_loader = set_loader(opt, gen_model)
+    else:
+        train_loader = set_loader(opt)
 
     # build model and criterion
     model, criterion = set_model(opt)
@@ -201,6 +196,8 @@ def main():
             if opt.multi_pgd:
                 if opt.add_org_samples:
                     loss = adv_train2_plus_org(train_loader, model, criterion, optimizer, epoch, opt, atk, ema)
+                elif opt.semi:
+                    loss  = adv_train_semi(train_loader, model, criterion, optimizer, epoch, opt, atk, ema)
                 else:
                     loss = adv_train2(train_loader, model, criterion, optimizer, epoch, opt, atk, ema)
             else:
