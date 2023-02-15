@@ -213,6 +213,7 @@ def main():
                 print('use multi_pgd')
                 # loss = adv_train1(train_loader, model, criterion, optimizer, epoch, opt, atk)
         else:
+            print('not adversarial training')
             loss = train(train_loader, model, criterion, optimizer, epoch, opt)
 
         if ema:
