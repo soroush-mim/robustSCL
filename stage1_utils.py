@@ -1,6 +1,7 @@
 import torch
 import torch.backends.cudnn as cudnn
 from torchvision import transforms, datasets
+from torch import nn
 
 import time
 import sys
