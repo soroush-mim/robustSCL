@@ -217,9 +217,11 @@ def adv_train2(train_loader, model, criterion, optimizer, epoch, opt, multi_atk,
     batch_time = AverageMeter()
     data_time = AverageMeter()
     losses = AverageMeter()
-
+    img_to_use = list(map(int, opt.steps_to_use.split(','))) 
+    view_num = len(img_to_use)*2
     end = time.time()
     
+
     for idx, (images, labels) in enumerate(train_loader):
         data_time.update(time.time() - end)
 
@@ -238,9 +240,7 @@ def adv_train2(train_loader, model, criterion, optimizer, epoch, opt, multi_atk,
         adv_images = multi_atk(images, labels, loss = criterion)
         model.train()
         adv_images.append(images)
-        img_to_use = [7,8,9,10]
         adv_images = [adv_images[i] for i in img_to_use]
-        view_num = len(adv_images)*2
         adv_images = torch.cat(adv_images, dim = 0) #size -> (2*bsz*view_num, 3,32,32)
         # compute loss
         features = model(adv_images)

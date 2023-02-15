@@ -50,7 +50,7 @@ def parse_option():
 
     # optimization
     ###########
-    parser.add_argument('--learning_rate', type=float, default=0.05,
+    parser.add_argument('--learning_rate', type=float, default=0.1,
                         help='learning rate')
     parser.add_argument('--lr_decay_epochs', type=str, default='700,800,900',
                         help='where to decay lr, can be a list')
@@ -75,7 +75,7 @@ def parse_option():
                         choices=['SupCon', 'SimCLR'], help='choose method')
 
     # temperature
-    parser.add_argument('--temp', type=float, default=0.07,
+    parser.add_argument('--temp', type=float, default=0.05,
                         help='temperature for loss function')
 
     # other setting
@@ -89,13 +89,19 @@ def parse_option():
                         help='id for recording multiple runs')
 
     parser.add_argument('--multi_pgd', action='store_true')
-
     parser.add_argument('--pgd_train_steps', type=int, default=10)
 
     parser.add_argument('--add_org_samples', action='store_true')
 
     parser.add_argument('--semi', action='store_true',
                         help='using semi supervised aproach')
+    
+    parser.add_argument('--steps_to_use', type=str, default='9,10', #10 is clean example, 9 is last iteration of PGD
+                        help='which attack steps to use(starts from zero, 10 is clean example)')
+    
+    parser.add_argument('--ema', action='store_true',
+                        help='using exponential moving avg')
+    
 
     opt = parser.parse_args()
 
@@ -116,15 +122,15 @@ def parse_option():
     for it in iterations:
         opt.lr_decay_epochs.append(int(it))
 
-    opt.model_name = '7,8,9,10_{}_lr_{}_decay_{}_bsz_{}_temp_{}_trial_{}ema996_LOSSV2'.\
-        format(opt.model, opt.learning_rate,
+    opt.model_name = '{}_{}_lr_{}_decay_{}_bsz_{}_temp_{}_trial_{}'.\
+        format(opt.steps_to_use, opt.model, opt.learning_rate,
                opt.weight_decay, opt.batch_size, opt.temp, opt.trial)
 
     if opt.cosine:
         opt.model_name = '{}_cosine'.format(opt.model_name)
 
     # warm-up for large-batch training,
-    if opt.batch_size > 256:
+    if opt.batch_size >= 256:
         opt.warm = True
     if opt.warm:
         opt.model_name = '{}_warm'.format(opt.model_name)
@@ -169,7 +175,10 @@ def main():
     optimizer = set_optimizer(opt, model)
 
     # ema = False
-    ema = ExponentialMovingAverage(model.parameters(), decay=0.996)
+    if opt.ema:
+        ema = ExponentialMovingAverage(model.parameters(), decay=0.996)
+    else:
+        ema=False
 
     with open(opt.tb_folder + '/stage1_args.txt', 'w') as f:
         json.dump(opt.__dict__, f, indent=2)
@@ -184,7 +193,7 @@ def main():
                 atk = PGDConsMulti(model, eps=8./255, alpha=2./225, steps=opt.pgd_train_steps, random_start=True)
 
         else:
-            atk = PGDCons(model, eps=8./255, alpha=2./225, steps=10, random_start=True)
+            atk = PGDCons(model, eps=8./255, alpha=2./225, steps=opt.pgd_train_steps, random_start=True)
 
     # training routine
     for epoch in range(1, opt.epochs + 1):
