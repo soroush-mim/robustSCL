@@ -83,7 +83,7 @@ def parse_option():
                         help='using cosine annealing')
     parser.add_argument('--syncBN', action='store_true',
                         help='using synchronized batch normalization')
-    parser.add_argument('--warm', action='store_true',
+    parser.add_argument('--warm', action='store_false',
                         help='warm-up for large batch training')
     parser.add_argument('--trial', type=str, default='0',
                         help='id for recording multiple runs')
@@ -96,11 +96,12 @@ def parse_option():
     parser.add_argument('--semi', action='store_true',
                         help='using semi supervised aproach')
     
-    parser.add_argument('--steps_to_use', type=str, default='9,10', #10 is clean example, 9 is last iteration of PGD
+    parser.add_argument('--steps_to_use', type=str, default='9', #10 is clean example, 9 is last iteration of PGD
                         help='which attack steps to use(starts from zero, 10 is clean example)')
     
     parser.add_argument('--ema', action='store_true',
                         help='using exponential moving avg')
+    parser.add_argument('--ema_decay', type=float, default=0.996)
     
 
     opt = parser.parse_args()
@@ -122,12 +123,14 @@ def parse_option():
     for it in iterations:
         opt.lr_decay_epochs.append(int(it))
 
-    opt.model_name = '{}_{}_lr_{}_decay_{}_bsz_{}_temp_{}_trial_{}'.\
+    opt.model_name = 'steps_{}_{}_lr_{}_decay_{}_bsz_{}_temp_{}_epochs_{}_trial_{}'.\
         format(opt.steps_to_use, opt.model, opt.learning_rate,
-               opt.weight_decay, opt.batch_size, opt.temp, opt.trial)
+               opt.weight_decay, opt.batch_size, opt.temp, opt.epochs, opt.trial)
 
     if opt.cosine:
         opt.model_name = '{}_cosine'.format(opt.model_name)
+    if opt.ema:
+        opt.model_name = '{}_ema{}'.format(opt.model_name, opt.ema_decay)
 
     # warm-up for large-batch training,
     if opt.batch_size >= 256:
@@ -176,7 +179,7 @@ def main():
 
     # ema = False
     if opt.ema:
-        ema = ExponentialMovingAverage(model.parameters(), decay=0.996)
+        ema = ExponentialMovingAverage(model.parameters(), decay=opt.ema_decay)
     else:
         ema=False
 
