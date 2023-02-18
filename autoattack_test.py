@@ -14,6 +14,16 @@ import os
 import numpy as np
 
 
+def parse_option():
+    parser = argparse.ArgumentParser('argument for autoattack test')
+
+    parser.add_argument('--encoder_ckpt', type=str)
+    parser.add_argument('--model_ckpt', type=str)
+
+    opt = parser.parse_args()
+
+    return opt
+    
 class ClassifierModel(nn.Module):
     "encoder + classifier"
     def __init__(self, encoder, linearClassifier):
@@ -75,9 +85,11 @@ def set_loader_linear(): #select only 1000 samples from cifar10
 
 if __name__ == '__main__':
 
+    opt = parse_option()
+
     val_loader = set_loader_linear()
 
-    model, classifier = set_model_linear()
+    model, classifier = set_model_linear(opt.encoder_ckpt, opt.classifier_ckpt)
     CModel = ClassifierModel(model.encoder, classifier)
 
 
