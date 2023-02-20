@@ -90,9 +90,8 @@ def parse_option():
     for it in iterations:
         opt.lr_decay_epochs.append(int(it))
 
-    opt.model_name = 'stage2{}_{}_lr_{}_decay_{}_bsz_{}_without_ema'.\
-        format(opt.dataset, opt.model, opt.learning_rate, opt.weight_decay,
-               opt.batch_size)
+    opt.model_name = 'stage2_lr_{}_decay_{}_bsz_{}_ckpt{}'.\
+        format(opt.learning_rate, opt.weight_decay,opt.batch_size, opt.ckpt[opt.ckpt.rfind('/')+1:])
 
     if opt.cosine:
         opt.model_name = '{}_cosine'.format(opt.model_name)
@@ -186,7 +185,7 @@ def main():
 
     print('best accuracy: {:.2f}'.format(best_acc))
     print('best adv accuracy: {:.2f}'.format(best_adv_acc))
-    torch.save(best_state , 'LOSSV2_satge2_7,8,9_10_resnet18_lr_0.1_decay_0.0005_bsz_200_temp_0.07_trial_0_cosine.pth')
+    torch.save(best_state , opt.model_name + '.pth')
 
 
 if __name__ == '__main__':
