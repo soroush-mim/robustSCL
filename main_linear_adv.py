@@ -76,6 +76,9 @@ def parse_option():
     parser.add_argument('--ckpt', type=str, default='',
                         help='path to pre-trained model')
     
+
+    parser.add_argument('--semi', action='store_true')
+    
     parser.add_argument
 
     opt = parser.parse_args()
