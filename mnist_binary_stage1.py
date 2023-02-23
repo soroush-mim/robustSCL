@@ -160,7 +160,7 @@ def set_loader(opt):
     train_dataset = datasets.MNIST('../data', train=True, download=True,
                                transform=transform)
 
-    idx_train = get_same_index(train_dataset.train_labels, 1, 3)
+    idx_train = get_same_index(train_dataset.targets, 1, 3)
     train_dataset.targets = train_dataset.targets[idx_train] - 2
     train_dataset.data = train_dataset.data[idx_train]
 
