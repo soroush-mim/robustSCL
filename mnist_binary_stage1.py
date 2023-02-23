@@ -6,6 +6,7 @@ import math
 
 import tensorboard_logger as tb_logger
 from torchvision import transforms, datasets
+import torch
 
 from util import adjust_learning_rate
 from util import TwoCropTransform
@@ -70,7 +71,10 @@ def parse_option():
     parser.add_argument('--trial', type=str, default='0',
                         help='id for recording multiple runs')
     
+    parser.add_argument('--model', type=str, default='smallCNN')
+    
     parser.add_argument('--data_folder', type=str, default=None, help='path to custom dataset')
+    parser.add_argument('--dataset', type=str, default='mnist_binary')
     
     parser.add_argument('--pgd_train_steps', type=int, default=20)
     
@@ -156,7 +160,7 @@ def set_loader(opt):
                                transform=train_transform)
 
 
-    idx_train = get_same_index(dataset_train.train_labels, 1, 3)
+    idx_train = get_same_index(train_dataset.train_labels, 1, 3)
     train_dataset.train_labels = train_dataset.train_labels[idx_train] - 2
     train_dataset.train_data = train_dataset.train_data[idx_train]
 
