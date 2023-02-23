@@ -7,6 +7,7 @@ import math
 import tensorboard_logger as tb_logger
 from torchvision import transforms, datasets
 import torch
+import torch.backends.cudnn as cudnn
 
 from util import adjust_learning_rate
 from util import TwoCropTransform
@@ -157,15 +158,16 @@ def set_loader(opt):
     transform = TwoCropTransform(train_transform)
 
     train_dataset = datasets.MNIST('../data', train=True, download=True,
-                               transform=train_transform)
-
+                               transform=transform)
 
     idx_train = get_same_index(train_dataset.train_labels, 1, 3)
-    train_dataset.train_labels = train_dataset.train_labels[idx_train] - 2
-    train_dataset.train_data = train_dataset.train_data[idx_train]
+    selected_labels = train_dataset.train_labels[idx_train] - 2
+    selected_data = train_dataset.train_data[idx_train]
+
+    selected_dataset = torch.utils.data.TensorDataset(selected_data, selected_labels)
 
     train_loader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=opt.batch_size, shuffle=True,
+        selected_dataset, batch_size=opt.batch_size, shuffle=True,
         num_workers=opt.num_workers, pin_memory=True)
 
     return train_loader
