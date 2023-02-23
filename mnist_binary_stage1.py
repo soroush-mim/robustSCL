@@ -173,7 +173,7 @@ def set_loader(opt):
     return train_loader
 
 def set_model(opt):
-    model = SupConCNN(name=opt.model)
+    model = SupConCNN()
     criterion = SupConLoss(temperature=opt.temp)#, V2=True)
 
     if torch.cuda.is_available():
