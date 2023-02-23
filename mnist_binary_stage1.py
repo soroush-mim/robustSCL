@@ -70,6 +70,8 @@ def parse_option():
     parser.add_argument('--trial', type=str, default='0',
                         help='id for recording multiple runs')
     
+    parser.add_argument('--data_folder', type=str, default=None, help='path to custom dataset')
+    
     parser.add_argument('--pgd_train_steps', type=int, default=20)
     
     parser.add_argument('--steps_to_use', type=str, default='9', #10 is clean example, 9 is last iteration of PGD
