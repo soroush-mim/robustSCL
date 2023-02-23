@@ -67,7 +67,7 @@ def parse_option():
                         help='using cosine annealing')
     parser.add_argument('--syncBN', action='store_true',
                         help='using synchronized batch normalization')
-    parser.add_argument('--warm', action='store_false',
+    parser.add_argument('--warm', action='store_true',
                         help='warm-up for large batch training')
     parser.add_argument('--trial', type=str, default='0',
                         help='id for recording multiple runs')
@@ -82,9 +82,14 @@ def parse_option():
     parser.add_argument('--steps_to_use', type=str, default='9', #10 is clean example, 9 is last iteration of PGD
                         help='which attack steps to use(starts from zero, 10 is clean example)')
     
+    parser.add_argument('--binary', action='store_false',
+                        help='warm-up for large batch training')
+    
     parser.add_argument('--ema', action='store_true',
                         help='using exponential moving avg')
     parser.add_argument('--ema_decay', type=float, default=0.996)
+
+    
     
 
     opt = parser.parse_args()
@@ -101,9 +106,11 @@ def parse_option():
     for it in iterations:
         opt.lr_decay_epochs.append(int(it))
 
-    opt.model_name = 'steps_{}_{}_lr_{}_decay_{}_bsz_{}_temp_{}_epochs_{}_trial_{}_mnist_binary'.\
+    opt.model_name = 'steps_{}_{}_lr_{}_decay_{}_bsz_{}_temp_{}_epochs_{}_trial_{}_mnist'.\
         format(opt.steps_to_use, opt.model, opt.learning_rate,
                opt.weight_decay, opt.batch_size, opt.temp, opt.epochs, opt.trial)
+    if opt.binary:
+        opt.model_name = '{}_binary'.format(opt.model_name)
 
     if opt.cosine:
         opt.model_name = '{}_cosine'.format(opt.model_name)
@@ -160,9 +167,10 @@ def set_loader(opt):
     train_dataset = datasets.MNIST('../data', train=True, download=True,
                                transform=transform)
 
-    idx_train = get_same_index(train_dataset.targets, 1, 3)
-    train_dataset.targets = train_dataset.targets[idx_train] - 2
-    train_dataset.data = train_dataset.data[idx_train]
+    if opt.binary:
+        idx_train = get_same_index(train_dataset.targets, 1, 3)
+        train_dataset.targets = train_dataset.targets[idx_train] - 2
+        train_dataset.data = train_dataset.data[idx_train]
 
     # selected_dataset = torch.utils.data.TensorDataset(selected_data, selected_labels)
 
