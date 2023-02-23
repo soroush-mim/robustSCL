@@ -241,7 +241,11 @@ class SupConCNN(nn.Module):
     def __init__(self, feat_dim=64):
         super(SupConCNN, self).__init__()
         self.encoder, dim_in = SmallCNN(), 256
-        self.head = nn.Linear(dim_in, feat_dim)
+        self.head = nn.Sequential(
+                nn.Linear(dim_in, 128),
+                nn.ReLU(inplace=True),
+                nn.Linear(128, feat_dim)
+            )
 
     def forward(self, x):
         # x = self.normalize(x)
