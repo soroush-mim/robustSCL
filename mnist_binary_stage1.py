@@ -161,13 +161,13 @@ def set_loader(opt):
                                transform=transform)
 
     idx_train = get_same_index(train_dataset.train_labels, 1, 3)
-    selected_labels = train_dataset.train_labels[idx_train] - 2
-    selected_data = train_dataset.train_data[idx_train]
+    train_dataset.targets = train_dataset.targets[idx_train] - 2
+    train_dataset.data = train_dataset.data[idx_train]
 
-    selected_dataset = torch.utils.data.TensorDataset(selected_data, selected_labels)
+    # selected_dataset = torch.utils.data.TensorDataset(selected_data, selected_labels)
 
     train_loader = torch.utils.data.DataLoader(
-        selected_dataset, batch_size=opt.batch_size, shuffle=True,
+        train_dataset, batch_size=opt.batch_size, shuffle=True,
         num_workers=opt.num_workers, pin_memory=True)
 
     return train_loader
