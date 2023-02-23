@@ -230,8 +230,6 @@ class SmallCNN(nn.Module):
             elif isinstance(m, nn.BatchNorm2d):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
-        nn.init.constant_(self.classifier.fc3.weight, 0)
-        nn.init.constant_(self.classifier.fc3.bias, 0)
 
     def forward(self, input):
         features = self.feature_extractor(input)
