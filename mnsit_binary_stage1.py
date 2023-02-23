@@ -18,19 +18,21 @@ from torch_ema import ExponentialMovingAverage
 from networks.resnet_big import SupConCNN
 from losses import SupConLoss
 
+from stage1_utils import adv_train2
+
 def parse_option():
     parser = argparse.ArgumentParser('argument for training')
 
-    parser.add_argument('--print_freq', type=int, default=50,
+    parser.add_argument('--print_freq', type=int, default=10,
                         help='print frequency')
-    parser.add_argument('--save_freq', type=int, default=100,
+    parser.add_argument('--save_freq', type=int, default=500,
                         help='save frequency')
     ##############
-    parser.add_argument('--batch_size', type=int, default=256,
+    parser.add_argument('--batch_size', type=int, default=128,
                         help='batch_size')
-    parser.add_argument('--num_workers', type=int, default=16,
+    parser.add_argument('--num_workers', type=int, default=8,
                         help='num of workers to use')
-    parser.add_argument('--epochs', type=int, default=300,
+    parser.add_argument('--epochs', type=int, default=100,
                         help='number of training epochs')
 
     parser.add_argument('--ADV_train', action='store_true',
@@ -38,7 +40,7 @@ def parse_option():
 
     # optimization
     ###########
-    parser.add_argument('--learning_rate', type=float, default=0.1,
+    parser.add_argument('--learning_rate', type=float, default=0.01,
                         help='learning rate')
     parser.add_argument('--lr_decay_epochs', type=str, default='700,800,900',
                         help='where to decay lr, can be a list')
@@ -49,8 +51,6 @@ def parse_option():
     parser.add_argument('--momentum', type=float, default=0.9,
                         help='momentum')
 
-    # model dataset
-    parser.add_argument('--model', type=str, default='resnet18')
 
     # method
     parser.add_argument('--method', type=str, default='SupCon',
@@ -70,7 +70,7 @@ def parse_option():
     parser.add_argument('--trial', type=str, default='0',
                         help='id for recording multiple runs')
     
-    parser.add_argument('--pgd_train_steps', type=int, default=10)
+    parser.add_argument('--pgd_train_steps', type=int, default=20)
     
     parser.add_argument('--steps_to_use', type=str, default='9', #10 is clean example, 9 is last iteration of PGD
                         help='which attack steps to use(starts from zero, 10 is clean example)')
@@ -170,7 +170,7 @@ def set_model(opt):
 
     if torch.cuda.is_available():
         if torch.cuda.device_count() > 1:
-            model.encoder = torch.nn.DataParallel(model.encoder,device_ids = [0,1])
+            model.encoder = torch.nn.DataParallel(model.encoder)
         model = model.cuda()
         criterion = criterion.cuda()
         cudnn.benchmark = True
@@ -199,7 +199,7 @@ def main():
     # tensorboard
     logger = tb_logger.Logger(logdir=opt.tb_folder, flush_secs=2)
     
-    atk = PGDConsMulti(model, eps=8./255, alpha=2./225, steps=opt.pgd_train_steps, random_start=True)
+    atk = PGDConsMulti(model, eps=0.1, alpha=0.01, steps=opt.pgd_train_steps, random_start=True)
 
     # training routine
     for epoch in range(1, opt.epochs + 1):
