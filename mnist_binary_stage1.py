@@ -75,7 +75,7 @@ def parse_option():
     parser.add_argument('--model', type=str, default='smallCNN')
     
     parser.add_argument('--data_folder', type=str, default=None, help='path to custom dataset')
-    parser.add_argument('--dataset', type=str, default='mnist_binary')
+    parser.add_argument('--dataset', type=str, default='mnist')
     
     parser.add_argument('--pgd_train_steps', type=int, default=20)
     
@@ -215,7 +215,7 @@ def main():
     # tensorboard
     logger = tb_logger.Logger(logdir=opt.tb_folder, flush_secs=2)
     
-    atk = PGDConsMulti(model, eps=0.1, alpha=0.01, steps=opt.pgd_train_steps, random_start=True)
+    atk = PGDConsMulti(model, eps=0.3, alpha=0.01, steps=opt.pgd_train_steps, random_start=True)
 
     # training routine
     for epoch in range(1, opt.epochs + 1):

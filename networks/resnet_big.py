@@ -179,6 +179,7 @@ model_dict = {
     'resnet34': [resnet34, 512],
     'resnet50': [resnet50, 2048],
     'resnet101': [resnet101, 2048],
+    'smallCNN':['', 1024],
 }
 
 
