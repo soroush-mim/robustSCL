@@ -4,6 +4,7 @@ import time
 import math
 from copy import deepcopy
 import os
+import sys
 
 import tensorboard_logger as tb_logger
 from torchvision import transforms, datasets
@@ -16,7 +17,7 @@ from util import adjust_learning_rate, warmup_learning_rate, accuracy, AverageMe
 from networks.resnet_big import SupConCNN, LinearClassifier
 
 from adv_train import PGDAttack
-
+from trades import trades_loss
 from stage2_utils import validate, adv_validate
 
 def parse_option():
@@ -102,6 +103,15 @@ def parse_option():
 
     return opt
 
+def get_same_index(target, label_1, label_2):
+    label_indices = []
+
+    for i in range(len(target)):
+        if target[i] == label_1:
+            label_indices.append(i)
+        if target[i] == label_2:
+            label_indices.append(i)
+    return label_indices
 
 def set_loader(opt):
 
@@ -210,7 +220,7 @@ def train(train_loader, model, classifier, criterion, optimizer, epoch, opt, fre
                             step_size = 0.01,
                             epsilon=0.3,
                             perturb_steps=20,
-                            beta=1.0,
+                            beta=6.0,
                             distance='l_inf')
 
         # update metric
