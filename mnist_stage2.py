@@ -99,7 +99,11 @@ def parse_option():
     if not os.path.isdir(opt.tb_folder):
         os.makedirs(opt.tb_folder)
 
-    opt.n_cls = 10
+
+    if opt.binary:
+        opt.n_cls = 2
+    else:
+        opt.n_cls = 10
 
     return opt
 
