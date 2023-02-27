@@ -179,7 +179,7 @@ model_dict = {
     'resnet34': [resnet34, 512],
     'resnet50': [resnet50, 2048],
     'resnet101': [resnet101, 2048],
-    'smallCNN':['', 1024],
+    'smallCNN':['', 128],
 }
 
 
@@ -219,8 +219,10 @@ class SmallCNN(nn.Module):
         ]))
 
         self.classifier = nn.Sequential(OrderedDict([
-            ('fc1', nn.Linear(64 * 4 * 4, 256)),
+            ('fc1', nn.Linear(64 * 4 * 4, 200)),
             ('relu1', activ),
+            ('fc2', nn.Linear(200, 128)),
+            ('relu2', activ),
         ]))
 
         for m in self.modules():
@@ -241,7 +243,7 @@ class SupConCNN(nn.Module):
 
     def __init__(self, feat_dim=64):
         super(SupConCNN, self).__init__()
-        self.encoder, dim_in = SmallCNN(), 256
+        self.encoder, dim_in = SmallCNN(), model_dict['smallCNN']
         self.head = nn.Sequential(
                 nn.Linear(dim_in, 128),
                 nn.ReLU(inplace=True),
