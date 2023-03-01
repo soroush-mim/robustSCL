@@ -142,8 +142,8 @@ def set_loader(opt):
         train_dataset.data = train_dataset.data[idx_train]
 
         idx_val = get_same_index(val_dataset.targets, 1, 3)
-        val_dataset.targets = val_dataset.targets[idx_train] - 2
-        val_dataset.data = val_dataset.data[idx_train]
+        val_dataset.targets = val_dataset.targets[idx_val] - 2
+        val_dataset.data = val_dataset.data[idx_val]
 
     # selected_dataset = torch.utils.data.TensorDataset(selected_data, selected_labels)
 
