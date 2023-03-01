@@ -87,8 +87,8 @@ def set_loader_linear(opt): #select only 1000 samples from mnist if not binary
 
     if opt.binary:
 
-        idx_val = get_same_index(cifar_testset.targets, 1, 3)
-        cifar_testset.targets = cifar_testset.targets[idx_val] - 2
+        idx_val = get_same_index(cifar_testset.targets, 1, 2)
+        cifar_testset.targets = cifar_testset.targets[idx_val] - 1
         cifar_testset.data = cifar_testset.data[idx_val]
 
 

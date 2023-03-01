@@ -29,7 +29,7 @@ def parse_option():
                         help='save frequency')
     parser.add_argument('--batch_size', type=int, default=128,
                         help='batch_size')
-    parser.add_argument('--num_workers', type=int, default=16,
+    parser.add_argument('--num_workers', type=int, default=8,
                         help='num of workers to use')
     parser.add_argument('--epochs', type=int, default=100,
                         help='number of training epochs')
@@ -137,12 +137,12 @@ def set_loader(opt):
                                transform=val_transform)
 
     if opt.binary:
-        idx_train = get_same_index(train_dataset.targets, 1, 3)
-        train_dataset.targets = train_dataset.targets[idx_train] - 2
+        idx_train = get_same_index(train_dataset.targets, 1, 2)
+        train_dataset.targets = train_dataset.targets[idx_train] - 1
         train_dataset.data = train_dataset.data[idx_train]
 
-        idx_val = get_same_index(val_dataset.targets, 1, 3)
-        val_dataset.targets = val_dataset.targets[idx_val] - 2
+        idx_val = get_same_index(val_dataset.targets, 1, 2)
+        val_dataset.targets = val_dataset.targets[idx_val] - 1
         val_dataset.data = val_dataset.data[idx_val]
 
     # selected_dataset = torch.utils.data.TensorDataset(selected_data, selected_labels)

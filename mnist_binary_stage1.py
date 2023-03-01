@@ -93,7 +93,8 @@ def parse_option():
 
     opt = parser.parse_args()
 
-
+    if opt.binary:
+        opt.dataset = '{}_binary'.format(opt.dataset)
     # set the path according to the environment
     if opt.data_folder is None:
         opt.data_folder = './datasets/'
@@ -167,8 +168,8 @@ def set_loader(opt):
                                transform=transform)
 
     if opt.binary:
-        idx_train = get_same_index(train_dataset.targets, 1, 3)
-        train_dataset.targets = train_dataset.targets[idx_train] - 2
+        idx_train = get_same_index(train_dataset.targets, 1, 2)
+        train_dataset.targets = train_dataset.targets[idx_train] - 1
         train_dataset.data = train_dataset.data[idx_train]
 
     # selected_dataset = torch.utils.data.TensorDataset(selected_data, selected_labels)
