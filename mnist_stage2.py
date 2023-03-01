@@ -67,6 +67,9 @@ def parse_option():
     # set the path according to the environment
     opt.data_folder = './datasets/'
 
+    if opt.binary:
+        opt.dataset = '{}_binary'.format(opt.dataset)
+
     
 
     iterations = opt.lr_decay_epochs.split(',')
@@ -74,8 +77,10 @@ def parse_option():
     for it in iterations:
         opt.lr_decay_epochs.append(int(it))
 
+    stage1_name = opt.ckpt[:,opt.ckpt.rfind('/')]
+    stage1_name = stage1_name[stage1_name.rfind('/')+1:]
     opt.model_name = 'mnist_stage2_lr_{}_decay_{}_bsz_{}_ckpt{}'.\
-        format(opt.learning_rate, opt.weight_decay,opt.batch_size, opt.ckpt[opt.ckpt.rfind('/')+1:])
+        format(opt.learning_rate, opt.weight_decay,opt.batch_size, stage1_name)
 
     if opt.cosine:
         opt.model_name = '{}_cosine'.format(opt.model_name)
@@ -95,6 +100,7 @@ def parse_option():
 
     opt.tb_path = './save/SupCon/{}_tensorboard_stage2'.format(opt.dataset)
     opt.tb_folder = os.path.join(opt.tb_path, opt.model_name)
+    opt.model_path = './save/SupCon/{}_models_stage2'.format(opt.dataset)
 
     if not os.path.isdir(opt.tb_folder):
         os.makedirs(opt.tb_folder)
@@ -104,6 +110,10 @@ def parse_option():
         opt.n_cls = 2
     else:
         opt.n_cls = 10
+
+    opt.save_folder = os.path.join(opt.model_path, opt.model_name)
+    if not os.path.isdir(opt.save_folder):
+        os.makedirs(opt.save_folder)
 
     return opt
 
@@ -312,7 +322,9 @@ def main():
 
     print('best accuracy: {:.2f}'.format(best_acc))
     print('best adv accuracy: {:.2f}'.format(best_adv_acc))
-    torch.save(best_state , opt.model_name + '.pth')
+    save_file = os.path.join(
+        opt.save_folder, 'best.pth')
+    torch.save(best_state , save_file)
 
 
 if __name__ == '__main__':
