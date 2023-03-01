@@ -8,6 +8,8 @@ import torch.backends.cudnn as cudnn
 import numpy as np
 import matplotlib.pyplot as plt
 
+from networks.resnet_big import SupConCNN
+
 
 
 def parse_option():
@@ -20,7 +22,17 @@ def parse_option():
 
     opt = parser.parse_args()
 
+    return opt
 
+def get_same_index(target, label_1, label_2):
+    label_indices = []
+
+    for i in range(len(target)):
+        if target[i] == label_1:
+            label_indices.append(i)
+        if target[i] == label_2:
+            label_indices.append(i)
+    return label_indices
 
 def set_loader(binary):
 
@@ -42,23 +54,23 @@ def set_loader(binary):
                                transform=val_transform)
 
     if binary:
-        idx_train = get_same_index(train_dataset.targets, 1, 3)
-        train_dataset.targets = train_dataset.targets[idx_train] - 2
+        idx_train = get_same_index(train_dataset.targets, 1, 2)
+        train_dataset.targets = train_dataset.targets[idx_train] - 1
         train_dataset.data = train_dataset.data[idx_train]
 
-        idx_val = get_same_index(val_dataset.targets, 1, 3)
-        val_dataset.targets = val_dataset.targets[idx_train] - 2
-        val_dataset.data = val_dataset.data[idx_train]
+        idx_val = get_same_index(val_dataset.targets, 1, 2)
+        val_dataset.targets = val_dataset.targets[idx_val] - 1
+        val_dataset.data = val_dataset.data[idx_val]
         
 
-    train_loader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=64, shuffle=True,
-        num_workers=8, pin_memory=True)
+    # train_loader = torch.utils.data.DataLoader(
+    #     train_dataset, batch_size=64, shuffle=True,
+    #     num_workers=8, pin_memory=True)
     val_loader = torch.utils.data.DataLoader(
         val_dataset, batch_size=1024, shuffle=True,
         num_workers=8, pin_memory=True)
 
-    return train_loader,val_loader
+    return val_loader
 
 
 
@@ -86,10 +98,9 @@ def set_model(ckpt_path):
 
 
 
-def get_reps(val_loader, model):
+def get_reps(val_loader, model, attack):
     """validation"""
     model.eval()
-    classifier.eval()
 
     outputs = []
     adv_outputs = []
@@ -116,7 +127,7 @@ def get_reps(val_loader, model):
 
 opt = parse_option()
 
-train_loader, val_loader = set_loader(opt.binary)
+val_loader = set_loader(opt.binary)
 
 # build model and criterion
 model = set_model(opt.ckpt)

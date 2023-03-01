@@ -77,7 +77,7 @@ def parse_option():
     for it in iterations:
         opt.lr_decay_epochs.append(int(it))
 
-    stage1_name = opt.ckpt[:,opt.ckpt.rfind('/')]
+    stage1_name = opt.ckpt[:opt.ckpt.rfind('/')]
     stage1_name = stage1_name[stage1_name.rfind('/')+1:]
     opt.model_name = 'mnist_stage2_lr_{}_decay_{}_bsz_{}_ckpt{}'.\
         format(opt.learning_rate, opt.weight_decay,opt.batch_size, stage1_name)
@@ -267,7 +267,7 @@ def train(train_loader, model, classifier, criterion, optimizer, epoch, opt, fre
 
 def main():
     best_acc = 0
-    best_adv_acc = 0
+    best_adv_acc = -1.0
     opt = parse_option()
 
     # build data loader
