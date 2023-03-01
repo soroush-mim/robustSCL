@@ -82,8 +82,7 @@ def parse_option():
     parser.add_argument('--steps_to_use', type=str, default='9', #10 is clean example, 9 is last iteration of PGD
                         help='which attack steps to use(starts from zero, 10 is clean example)')
     
-    parser.add_argument('--binary', action='store_false',
-                        help='warm-up for large batch training')
+    parser.add_argument('--binary', action='store_false')
     
     parser.add_argument('--ema', action='store_true',
                         help='using exponential moving avg')

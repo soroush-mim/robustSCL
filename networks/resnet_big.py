@@ -243,7 +243,7 @@ class SupConCNN(nn.Module):
 
     def __init__(self, feat_dim=64):
         super(SupConCNN, self).__init__()
-        self.encoder, dim_in = SmallCNN(), model_dict['smallCNN']
+        self.encoder, dim_in = SmallCNN(), model_dict['smallCNN'][1]
         self.head = nn.Sequential(
                 nn.Linear(dim_in, 128),
                 nn.ReLU(inplace=True),
@@ -251,7 +251,6 @@ class SupConCNN(nn.Module):
             )
 
     def forward(self, x):
-        # x = self.normalize(x)
         feat = self.encoder(x)
         feat = F.normalize(self.head(feat), dim=1)
         return feat
@@ -275,14 +274,7 @@ class SupConResNet(nn.Module):
             raise NotImplementedError(
                 'head not supported: {}'.format(head))
 
-    #     self.mu = torch.tensor((0.4914, 0.4822, 0.4465)).view(3,1,1).cuda()
-    #     self.std = torch.tensor((0.2023, 0.1994, 0.2010)).view(3,1,1).cuda()
-
-    # def normalize(self, X):
-    #     return (X - self.mu)/self.std
-
     def forward(self, x):
-        # x = self.normalize(x)
         feat = self.encoder(x)
         feat = F.normalize(self.head(feat), dim=1)
         return feat
