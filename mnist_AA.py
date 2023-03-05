@@ -68,7 +68,6 @@ def set_model_linear(opt):
         state_dict = new_state_dict
         model = model.cuda()
         classifier = classifier.cuda()
-        criterion = criterion.cuda()
         cudnn.benchmark = True
 
         model.load_state_dict(state_dict)
