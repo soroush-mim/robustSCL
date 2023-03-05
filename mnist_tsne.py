@@ -50,27 +50,27 @@ def get_same_index(target, label_1, label_2):
 
 def set_loader(binary):
 
-    train_transform = transforms.Compose([
-        transforms.RandomResizedCrop(size=28, scale=(0.2, 1.)),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        # normalize,
+    # train_transform = transforms.Compose([
+    #     transforms.RandomResizedCrop(size=28, scale=(0.2, 1.)),
+    #     transforms.RandomHorizontalFlip(),
+    #     transforms.ToTensor(),
+    #     # normalize,
     ])
     val_transform = transforms.Compose([
         transforms.ToTensor(),
         # normalize,
     ])
 
-    train_dataset = datasets.MNIST('../data', train=True, download=True,
-                               transform=train_transform)
+    # train_dataset = datasets.MNIST('../data', train=True, download=True,
+    #                            transform=train_transform)
         
     val_dataset = datasets.MNIST('../data', train=False, download=True,
                                transform=val_transform)
 
     if binary:
-        idx_train = get_same_index(train_dataset.targets, 1, 2)
-        train_dataset.targets = train_dataset.targets[idx_train] - 1
-        train_dataset.data = train_dataset.data[idx_train]
+        # idx_train = get_same_index(train_dataset.targets, 1, 2)
+        # train_dataset.targets = train_dataset.targets[idx_train] - 1
+        # train_dataset.data = train_dataset.data[idx_train]
 
         idx_val = get_same_index(val_dataset.targets, 1, 2)
         val_dataset.targets = val_dataset.targets[idx_val] - 1
@@ -124,14 +124,15 @@ def get_reps(val_loader, model, attack):
     adv_outputs = []
     all_labels = []
 
-    with torch.no_grad():
-        for idx, (images, labels) in enumerate(val_loader):
-            # images = images.float().cuda()
-            images = images.cuda()
-            labels = labels.cuda()
-            input_adv = attack(images, labels)
+    
+    for idx, (images, labels) in enumerate(val_loader):
+        # images = images.float().cuda()
+        images = images.cuda()
+        labels = labels.cuda()
+        input_adv = attack(images, labels)
 
-            # forward
+        # forward
+        with torch.no_grad():
             outputs.append(model.encoder(images))
             adv_outputs.append(model.encoder(input_adv))
             all_labels.append(labels) 
@@ -149,18 +150,17 @@ val_loader = set_loader(opt.binary)
 
 # build model and criterion
 model, classifier = set_model(opt.ckpt, opt.classifier_ckpt, opt.n_cls)
-
 attack = PGDAttack(model, classifier, eps=0.3, alpha = 0.01, steps=40)
-
-
 reps, adv_reps, labels = get_reps(val_loader,model,attack)
 
 emb = TSNE(n_components=2, perplexity=30, n_iter=1000, verbose=True).fit_transform(reps)
 adv_emb = TSNE(n_components=2, perplexity=30, n_iter=1000, verbose=True).fit_transform(adv_reps)
 labels = labels.numpy()
+
 # fig = plt.figure(figsize=(8,8))
 stage1_name = opt.ckpt[:opt.ckpt.rfind('/')]
 stage1_name = stage1_name[stage1_name.rfind('/')+1:]
+
 plt.scatter(emb[:, 0], emb[:, 1], 20, labels)
 plt.savefig('{}/{}_CLEAN.png'.format(opt.tb_path,stage1_name))
 plt.clf()
