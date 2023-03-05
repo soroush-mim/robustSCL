@@ -15,8 +15,8 @@ import numpy as np
 def parse_option():
     parser = argparse.ArgumentParser('argument for autoattack test')
 
-    parser.add_argument('--encoder_ckpt', type=str)
-    parser.add_argument('--model_ckpt', type=str)
+    parser.add_argument('--ckpt', type=str)
+    parser.add_argument('--classifier_ckpt', type=str)
     parser.add_argument('--binary', action='store_false')
 
     opt = parser.parse_args()
@@ -83,7 +83,7 @@ def set_loader_linear(opt): #select only 1000 samples from mnist if not binary
     
     val_transform = transforms.Compose([transforms.ToTensor()])
 
-    cifar_testset = datasets.MNIST(root='./data', train=False, download=True, transform=val_transform)
+    cifar_testset = datasets.MNIST(root='../data', train=False, download=True, transform=val_transform)
 
     if opt.binary:
 
@@ -121,7 +121,7 @@ if __name__ == '__main__':
 
     val_loader = set_loader_linear(opt)
 
-    model, classifier = set_model_linear(opt.encoder_ckpt, opt.classifier_ckpt)
+    model, classifier = set_model_linear(opt.ckpt, opt.classifier_ckpt)
     CModel = ClassifierModel(model.encoder, classifier)
 
     save_dir = './results_mnist'
