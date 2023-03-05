@@ -19,12 +19,12 @@ def parse_option():
     parser.add_argument('--model_ckpt', type=str)
     parser.add_argument('--binary', action='store_false')
 
+    opt = parser.parse_args()
+
     if opt.binary:
         opt.n_cls = 2
     else:
         opt.n_cls = 10
-
-    opt = parser.parse_args()
 
     return opt
     
