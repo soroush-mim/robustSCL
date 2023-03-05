@@ -8,7 +8,8 @@ import torch.backends.cudnn as cudnn
 import numpy as np
 import matplotlib.pyplot as plt
 
-from networks.resnet_big import SupConCNN
+from networks.resnet_big import SupConCNN, LinearClassifier
+from adv_train import PGDAttack
 
 
 
@@ -17,8 +18,14 @@ def parse_option():
 
     parser.add_argument('--ckpt', type=str, default='',
                         help='path to pre-trained model')
+    parser.add_argument('--classifier_ckpt', type=str, default='',
+                        help='path to pre-trained model')
     parser.add_argument('--binary', action='store_false')
     
+    if opt.binary:
+        opt.n_cls = 2
+    else:
+        opt.n_cls = 10
 
     opt = parser.parse_args()
 
@@ -74,11 +81,14 @@ def set_loader(binary):
 
 
 
-def set_model(ckpt_path):
+def set_model(ckpt_path, classifier_ckpt, n_cls):
     model = SupConCNN()
 
     ckpt = torch.load(ckpt_path, map_location='cpu')
     state_dict = ckpt['model']
+
+    classifier = LinearClassifier(name='smallCNN', num_classes=n_cls)
+    classifier_state = torch.load(classifier_ckpt, map_location='cpu' )
 
     if torch.cuda.is_available():
         if torch.cuda.device_count() > 1:
@@ -90,11 +100,12 @@ def set_model(ckpt_path):
                 new_state_dict[k] = v
             state_dict = new_state_dict
         model = model.cuda()
+        classifier = classifier.cuda()
         cudnn.benchmark = True
-
+        classifier.load_state_dict(classifier_state)
         model.load_state_dict(state_dict)
 
-    return model
+    return model, classifier
 
 
 
@@ -130,19 +141,24 @@ opt = parse_option()
 val_loader = set_loader(opt.binary)
 
 # build model and criterion
-model = set_model(opt.ckpt)
+model, classifier = set_model(opt.ckpt, opt.classifier_ckpt, opt.n_cls)
 
-reps, adv_reps, labels = get_reps(val_loader,model)
+attack = PGDAttack(model, classifier, eps=0.3, alpha = 0.01, steps=40)
+
+
+reps, adv_reps, labels = get_reps(val_loader,model,attack)
 
 emb = TSNE(n_components=2, perplexity=30, n_iter=1000, verbose=True).fit_transform(reps)
 adv_emb = TSNE(n_components=2, perplexity=30, n_iter=1000, verbose=True).fit_transform(adv_reps)
 labels = labels.numpy()
 # fig = plt.figure(figsize=(8,8))
+stage1_name = opt.ckpt[:opt.ckpt.rfind('/')]
+stage1_name = stage1_name[stage1_name.rfind('/')+1:]
 plt.scatter(emb[:, 0], emb[:, 1], 20, labels)
-plt.savefig('clean.png')
+plt.savefig('{}_CLEAN.png'.format(stage1_name))
 plt.clf()
 plt.scatter(adv_emb[:, 0], adv_emb[:, 1], 20, labels)
-plt.savefig('adv.png')
+plt.savefig('{}_ADV.png'.format(stage1_name))
 
 
 
