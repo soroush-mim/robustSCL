@@ -130,9 +130,12 @@ if __name__ == '__main__':
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
+    stage1_name = opt.ckpt[:opt.ckpt.rfind('/')]
+    stage1_name = stage1_name[stage1_name.rfind('/')+1:]
+
     # load attack    
     CModel.eval()
-    adversary = AutoAttack(CModel, norm='Linf', eps=8./255., version='standard', log_path='./log_file.txt')
+    adversary = AutoAttack(CModel, norm='Linf', eps=8./255., version='standard', log_path='{}/{}_log_file.txt'.format(save_dir,stage1_name))
 
     l = [x for (x, y) in val_loader]
     x_test = torch.cat(l, 0)
