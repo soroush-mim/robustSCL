@@ -137,9 +137,9 @@ def get_reps(val_loader, model, attack):
             adv_outputs.append(model.encoder(input_adv))
             all_labels.append(labels) 
     
-    outputs = torch.stack(outputs,2)
-    adv_outputs = torch.stack(adv_outputs,2)
-    all_labels = torch.stack(all_labels)
+    outputs = torch.cat(outputs)
+    adv_outputs = torch.cat(adv_outputs)
+    all_labels = torch.cat(all_labels)
 
     return outputs, adv_outputs, all_labels
 
