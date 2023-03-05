@@ -50,15 +50,15 @@ class ClassifierModel(nn.Module):
         return self.linearClassifier(self.encoder(x))
 
 
-def set_model_linear(encoder_ckpt, classifier_ckpt, opt):
+def set_model_linear(opt):
     model = SupConResNet(name='smallCNN')
     
     classifier = LinearClassifier(name='smallCNN', num_classes=opt.n_cls)
 
-    ckpt = torch.load(encoder_ckpt,map_location='cpu')
+    ckpt = torch.load(opt.ckpt,map_location='cpu')
     state_dict = ckpt['model']
 
-    classifier_state = torch.load(classifier_ckpt, map_location='cpu' )
+    classifier_state = torch.load(opt.classifier_ckpt, map_location='cpu' )
 
     if torch.cuda.is_available():
         new_state_dict = {}
@@ -121,7 +121,7 @@ if __name__ == '__main__':
 
     val_loader = set_loader_linear(opt)
 
-    model, classifier = set_model_linear(opt.ckpt, opt.classifier_ckpt)
+    model, classifier = set_model_linear(opt)
     CModel = ClassifierModel(model.encoder, classifier)
 
     save_dir = './results_mnist'
