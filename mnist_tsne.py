@@ -55,7 +55,7 @@ def set_loader(binary):
     #     transforms.RandomHorizontalFlip(),
     #     transforms.ToTensor(),
     #     # normalize,
-    ])
+    #])
     val_transform = transforms.Compose([
         transforms.ToTensor(),
         # normalize,
