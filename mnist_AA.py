@@ -4,7 +4,7 @@ import torch
 import torch.backends.cudnn as cudnn
 from torchvision import transforms, datasets
 
-from networks.resnet_big import SupConResNet,LinearClassifier
+from networks.resnet_big import SupConCNN,LinearClassifier
 
 from autoattack import AutoAttack
 
@@ -51,7 +51,7 @@ class ClassifierModel(nn.Module):
 
 
 def set_model_linear(opt):
-    model = SupConResNet(name='smallCNN')
+    model = SupConCNN()
     
     classifier = LinearClassifier(name='smallCNN', num_classes=opt.n_cls)
 
