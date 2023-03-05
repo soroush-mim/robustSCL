@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 
 from networks.resnet_big import SupConCNN, LinearClassifier
 from adv_train import PGDAttack
+import os
 
 
 
@@ -21,12 +22,16 @@ def parse_option():
     parser.add_argument('--classifier_ckpt', type=str, default='',
                         help='path to pre-trained model')
     parser.add_argument('--binary', action='store_false')
+    opt.tb_path = './save/SupCon/mnist_TSNe'
     
     if opt.binary:
         opt.n_cls = 2
+        opt.tb_path = '{}_binary'.format(opt.tb_path)
     else:
         opt.n_cls = 10
 
+    if not os.path.isdir(opt.tb_path):
+        os.makedirs(opt.tb_path)
     opt = parser.parse_args()
 
     return opt
@@ -155,10 +160,10 @@ labels = labels.numpy()
 stage1_name = opt.ckpt[:opt.ckpt.rfind('/')]
 stage1_name = stage1_name[stage1_name.rfind('/')+1:]
 plt.scatter(emb[:, 0], emb[:, 1], 20, labels)
-plt.savefig('{}_CLEAN.png'.format(stage1_name))
+plt.savefig('{}/{}_CLEAN.png'.format(opt.tb_path,stage1_name))
 plt.clf()
 plt.scatter(adv_emb[:, 0], adv_emb[:, 1], 20, labels)
-plt.savefig('{}_ADV.png'.format(stage1_name))
+plt.savefig('{}/{}_ADV.png'.format(opt.tb_path,stage1_name))
 
 
 
