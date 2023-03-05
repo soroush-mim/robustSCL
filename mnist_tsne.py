@@ -22,6 +22,8 @@ def parse_option():
     parser.add_argument('--classifier_ckpt', type=str, default='',
                         help='path to pre-trained model')
     parser.add_argument('--binary', action='store_false')
+
+    opt = parser.parse_args()
     opt.tb_path = './save/SupCon/mnist_TSNe'
     
     if opt.binary:
@@ -32,7 +34,7 @@ def parse_option():
 
     if not os.path.isdir(opt.tb_path):
         os.makedirs(opt.tb_path)
-    opt = parser.parse_args()
+    
 
     return opt
 
