@@ -155,7 +155,7 @@ reps, adv_reps, labels = get_reps(val_loader,model,attack)
 
 emb = TSNE(n_components=2, perplexity=30, n_iter=1000, verbose=True).fit_transform(reps)
 adv_emb = TSNE(n_components=2, perplexity=30, n_iter=1000, verbose=True).fit_transform(adv_reps)
-labels = labels.numpy()
+labels = labels.cpu().numpy()
 
 # fig = plt.figure(figsize=(8,8))
 stage1_name = opt.ckpt[:opt.ckpt.rfind('/')]
