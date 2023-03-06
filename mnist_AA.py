@@ -136,6 +136,9 @@ if __name__ == '__main__':
     CModel.eval()
     adversary = AutoAttack(CModel, norm='Linf', eps=8./255., version='standard', log_path='{}/{}_log_file.txt'.format(save_dir,stage1_name))
 
+    if opt.binary:
+        adversary.attacks_to_run = ['apgd-ce', 'square']
+
     l = [x for (x, y) in val_loader]
     x_test = torch.cat(l, 0)
     l = [y for (x, y) in val_loader]
