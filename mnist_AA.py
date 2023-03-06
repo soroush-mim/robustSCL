@@ -138,6 +138,8 @@ if __name__ == '__main__':
 
     if opt.binary:
         adversary.attacks_to_run = ['apgd-ce', 'square']
+        # adversary.square.n_restarts = 5
+        adversary.square.n_queries = 10000
 
     l = [x for (x, y) in val_loader]
     x_test = torch.cat(l, 0)
