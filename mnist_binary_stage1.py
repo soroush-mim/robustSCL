@@ -4,6 +4,8 @@ import time
 import json
 import math
 
+import wandb
+
 import tensorboard_logger as tb_logger
 from torchvision import transforms, datasets
 import torch
@@ -196,44 +198,53 @@ def set_model(opt):
     return model, criterion
 
 def main():
+
     opt = parse_option()
+    wandb.login(key='6b9ec4f40fff163732693cc1f749170bcc98b8ae')
+    config = opt.__dict__
 
-    train_loader = set_loader(opt)
-
-    model, criterion = set_model(opt)
-
-    optimizer = set_optimizer(opt, model)
-
-    if opt.ema:
-        ema = ExponentialMovingAverage(model.parameters(), decay=opt.ema_decay)
-    else:
-        ema=False
-
-    with open(opt.tb_folder + '/stage1_args.txt', 'w') as f:
-        json.dump(opt.__dict__, f, indent=2)
-    
-    # tensorboard
-    logger = tb_logger.Logger(logdir=opt.tb_folder, flush_secs=2)
-    
-    atk = PGDConsMulti(model, eps=0.3, alpha=0.01, steps=opt.pgd_train_steps, random_start=True)
-
-    # training routine
-    for epoch in range(1, opt.epochs + 1):
-        adjust_learning_rate(opt, optimizer, epoch)
-        # train for one epoch
-        time1 = time.time()
-        loss = adv_train2(train_loader, model, criterion, optimizer, epoch, opt, atk, ema)
-        time2 = time.time()
-
-        if ema:
-            copy_of_model_parameters = copy_parameters_from_model(model)
-            ema.copy_to(model.parameters())
+    with wandb.init(project="RSCL", config=config, name=opt.model_name):
         
-        print('epoch {}, total time {:.2f}'.format(epoch, time2 - time1))
 
-        # tensorboard logger
-        logger.log_value('loss', loss, epoch)
-        logger.log_value('learning_rate', optimizer.param_groups[0]['lr'], epoch)
+        train_loader = set_loader(opt)
+
+        model, criterion = set_model(opt)
+
+        optimizer = set_optimizer(opt, model)
+
+        if opt.ema:
+            ema = ExponentialMovingAverage(model.parameters(), decay=opt.ema_decay)
+        else:
+            ema=False
+
+        with open(opt.tb_folder + '/stage1_args.txt', 'w') as f:
+            json.dump(opt.__dict__, f, indent=2)
+        
+        # tensorboard
+        logger = tb_logger.Logger(logdir=opt.tb_folder, flush_secs=2)
+        
+        atk = PGDConsMulti(model, eps=0.3, alpha=0.01, steps=opt.pgd_train_steps, random_start=True)
+
+        # training routine
+        for epoch in range(1, opt.epochs + 1):
+            adjust_learning_rate(opt, optimizer, epoch)
+            # train for one epoch
+            time1 = time.time()
+            loss = adv_train2(train_loader, model, criterion, optimizer, epoch, opt, atk, ema)
+            time2 = time.time()
+
+            if ema:
+                copy_of_model_parameters = copy_parameters_from_model(model)
+                ema.copy_to(model.parameters())
+            
+            print('epoch {}, total time {:.2f}'.format(epoch, time2 - time1))
+
+            wandb.log({'train_loss':loss}, step=epoch)
+            wandb.log({'learning_rate':optimizer.param_groups[0]['lr']}, step=epoch)
+
+            # tensorboard logger
+            logger.log_value('loss', loss, epoch)
+            logger.log_value('learning_rate', optimizer.param_groups[0]['lr'], epoch)
 
         if epoch % opt.save_freq == 0:
             save_file = os.path.join(

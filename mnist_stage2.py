@@ -6,6 +6,8 @@ from copy import deepcopy
 import os
 import sys
 
+import wandb
+
 import tensorboard_logger as tb_logger
 from torchvision import transforms, datasets
 import torch
@@ -270,55 +272,64 @@ def main():
     best_adv_acc = -1.0
     opt = parse_option()
 
-    # build data loader
-    train_loader, val_loader = set_loader(opt)
+    wandb.login(key='6b9ec4f40fff163732693cc1f749170bcc98b8ae')
+    config = opt.__dict__
 
-    # build model and criterion
-    model, classifier, criterion = set_model(opt)
+    with wandb.init(project="RSCL", config=config, name=opt.model_name):
 
-    # build optimizer
-    # optimizer = set_optimizer(opt, classifier)
-    optimizer = optim.SGD(classifier.parameters(),
-                            lr= opt.learning_rate,
-                            momentum=opt.momentum,
-                            weight_decay=opt.weight_decay)
+        # build data loader
+        train_loader, val_loader = set_loader(opt)
 
-    logger = tb_logger.Logger(logdir=opt.tb_folder, flush_secs=2)
+        # build model and criterion
+        model, classifier, criterion = set_model(opt)
 
-    with open(opt.tb_folder + '/stage2_args.txt', 'w') as f:
-        json.dump(opt.__dict__, f, indent=2)
+        # build optimizer
+        # optimizer = set_optimizer(opt, classifier)
+        optimizer = optim.SGD(classifier.parameters(),
+                                lr= opt.learning_rate,
+                                momentum=opt.momentum,
+                                weight_decay=opt.weight_decay)
 
-    test_attack = PGDAttack(model, classifier, eps=0.3, alpha = 0.01, steps=40)
+        logger = tb_logger.Logger(logdir=opt.tb_folder, flush_secs=2)
 
-    # training routine
-    for epoch in range(1, opt.epochs + 1):
-        adjust_learning_rate(opt, optimizer, epoch)
+        with open(opt.tb_folder + '/stage2_args.txt', 'w') as f:
+            json.dump(opt.__dict__, f, indent=2)
 
-        # train for one epoch
-        time1 = time.time()
+        test_attack = PGDAttack(model, classifier, eps=0.3, alpha = 0.01, steps=40)
 
-        loss, acc = train(train_loader, model, classifier, criterion, optimizer, epoch, opt)
+        # training routine
+        for epoch in range(1, opt.epochs + 1):
+            adjust_learning_rate(opt, optimizer, epoch)
 
-        time2 = time.time()
-        print('Train epoch {}, total time {:.2f}, accuracy:{:.2f}'.format(
-            epoch, time2 - time1, acc))
+            # train for one epoch
+            time1 = time.time()
 
-        # eval for one epoch
-        clean_loss, val_acc = validate(val_loader, model, classifier, criterion, opt)
-        if val_acc > best_acc:
-            best_acc = val_acc
+            loss, acc = train(train_loader, model, classifier, criterion, optimizer, epoch, opt)
 
-        adv_loss, adv_val_acc = adv_validate(val_loader, model, classifier, criterion, opt, test_attack)
-        if adv_val_acc > best_adv_acc:
-            best_adv_acc = adv_val_acc
-            best_state = deepcopy(classifier.state_dict()) 
+            time2 = time.time()
+            print('Train epoch {}, total time {:.2f}, accuracy:{:.2f}'.format(
+                epoch, time2 - time1, acc))
 
-        
-        logger.log_value('clean loss', clean_loss, epoch)
-        logger.log_value('adv loss', adv_loss, epoch)
-        logger.log_value('clean acc', val_acc, epoch)
-        logger.log_value('adv acc', adv_val_acc, epoch)
-        logger.log_value('learning_rate', optimizer.param_groups[0]['lr'], epoch)
+            # eval for one epoch
+            clean_loss, val_acc = validate(val_loader, model, classifier, criterion, opt)
+            if val_acc > best_acc:
+                best_acc = val_acc
+
+            adv_loss, adv_val_acc = adv_validate(val_loader, model, classifier, criterion, opt, test_attack)
+            if adv_val_acc > best_adv_acc:
+                best_adv_acc = adv_val_acc
+                best_state = deepcopy(classifier.state_dict()) 
+
+            
+            wandb.log({'learning_rate': optimizer.param_groups[0]['lr']}, step = epoch)
+            wandb.log({'clean_val_loss': clean_loss , 'clean_val_acc':val_acc}, step = epoch)
+            wandb.log({'adv_val_loss': adv_loss , 'adv_val_acc':adv_val_acc}, step = epoch)
+
+            logger.log_value('clean loss', clean_loss, epoch)
+            logger.log_value('adv loss', adv_loss, epoch)
+            logger.log_value('clean acc', val_acc, epoch)
+            logger.log_value('adv acc', adv_val_acc, epoch)
+            logger.log_value('learning_rate', optimizer.param_groups[0]['lr'], epoch)
 
     print('best accuracy: {:.2f}'.format(best_acc))
     print('best adv accuracy: {:.2f}'.format(best_adv_acc))
