@@ -298,6 +298,7 @@ def main():
         test_attack = PGDAttack(model, classifier, eps=0.3, alpha = 0.01, steps=40)
 
         # training routine
+        wandb.watch((model.encoder,classifier), log='all', log_freq = 100)
         for epoch in range(1, opt.epochs + 1):
             adjust_learning_rate(opt, optimizer, epoch)
 
