@@ -18,9 +18,10 @@ from main_ce import set_loader
 from util import adjust_learning_rate, warmup_learning_rate, accuracy, AverageMeter
 from networks.resnet_big import SupConCNN, LinearClassifier
 
-from adv_train import PGDAttack
+from adv_train import PGDAttack, PGDConsMultiOneAug
 from trades import trades_loss
-from stage2_utils import validate, adv_validate
+from stage2_utils import validate, adv_validate, adv_validate_con
+from losses import SupConLoss
 
 def parse_option():
     parser = argparse.ArgumentParser('argument for training')
@@ -282,6 +283,7 @@ def main():
 
         # build model and criterion
         model, classifier, criterion = set_model(opt)
+        con_criterion = SupConLoss(temperature=0.05).cuda()
 
         # build optimizer
         # optimizer = set_optimizer(opt, classifier)
@@ -296,6 +298,8 @@ def main():
             json.dump(opt.__dict__, f, indent=2)
 
         test_attack = PGDAttack(model, classifier, eps=0.3, alpha = 0.01, steps=40)
+        con_test_attack =  PGDConsMultiOneAug(model.encoder, eps=0.3, alpha = 0.01, steps=40)
+        
 
         # training routine
         wandb.watch((model.encoder,classifier), log='all', log_freq = 100)
@@ -321,10 +325,13 @@ def main():
                 best_adv_acc = adv_val_acc
                 best_state = deepcopy(classifier.state_dict()) 
 
-            
+            adv_loss_con, adv_val_acc_con = adv_validate_con(val_loader, model, classifier, con_criterion, opt, con_test_attack)
+
+            #logging
             wandb.log({'learning_rate': optimizer.param_groups[0]['lr']}, step = epoch)
             wandb.log({'clean_val_loss': clean_loss , 'clean_val_acc':val_acc}, step = epoch)
             wandb.log({'adv_val_loss': adv_loss , 'adv_val_acc':adv_val_acc}, step = epoch)
+            wandb.log({'adv_val_loss_con': adv_loss_con , 'adv_val_acc_con':adv_val_acc_con}, step = epoch)
 
             logger.log_value('clean loss', clean_loss, epoch)
             logger.log_value('adv loss', adv_loss, epoch)

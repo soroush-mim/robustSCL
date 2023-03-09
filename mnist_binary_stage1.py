@@ -226,7 +226,7 @@ def main():
         atk = PGDConsMulti(model, eps=0.3, alpha=0.01, steps=opt.pgd_train_steps, random_start=True)
 
         # training routine
-        wandb.watch(model, log='all', log_freq = 100)
+        wandb.watch(model, log='all', log_freq = 10)
         for epoch in range(1, opt.epochs + 1):
             adjust_learning_rate(opt, optimizer, epoch)
             # train for one epoch

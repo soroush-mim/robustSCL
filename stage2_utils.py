@@ -268,3 +268,46 @@ def adv_validate(val_loader, model, classifier, criterion, opt, attack):
 
     print('adv * Acc@1 {top1.avg:.3f}'.format(top1=top1))
     return losses.avg, top1.avg
+
+
+def adv_validate_con(val_loader, model, classifier, criterion, opt, attack):
+    """adv validation"""
+    model.eval()
+    classifier.eval()
+
+    batch_time = AverageMeter()
+    losses = AverageMeter()
+    top1 = AverageMeter()
+
+    end = time.time()
+    for idx, (images, labels) in enumerate(val_loader):
+        images = images.float().cuda()
+        labels = labels.cuda()
+        bsz = labels.shape[0]
+        input_adv = attack(images, labels, criterion)[-1]
+
+        # forward
+        with torch.no_grad():
+            features = model.encoder(input_adv)
+            output = classifier(features)
+            loss = criterion(features, labels)
+
+        # update metric
+        losses.update(loss.item(), bsz)
+        acc1 = accuracy(output, labels, topk=(1,))[0]
+        top1.update(acc1[0], bsz)
+
+        # measure elapsed time
+        batch_time.update(time.time() - end)
+        end = time.time()
+
+        if idx % opt.print_freq == 0:
+            print('adv con Test: [{0}/{1}]\t'
+                    'adv con Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
+                    'adv con Loss {loss.val:.4f} ({loss.avg:.4f})\t'
+                    'adv con Acc@1 {top1.val:.3f} ({top1.avg:.3f})'.format(
+                    idx, len(val_loader), batch_time=batch_time,
+                    loss=losses, top1=top1))
+
+    print('adv con * Acc@1 {top1.avg:.3f}'.format(top1=top1))
+    return losses.avg, top1.avg
