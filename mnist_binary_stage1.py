@@ -233,10 +233,6 @@ def main():
             time1 = time.time()
             loss = adv_train2(train_loader, model, criterion, optimizer, epoch, opt, atk, ema)
             time2 = time.time()
-
-            if ema:
-                copy_of_model_parameters = copy_parameters_from_model(model)
-                ema.copy_to(model.parameters())
             
             print('epoch {}, total time {:.2f}'.format(epoch, time2 - time1))
 
@@ -247,20 +243,23 @@ def main():
             logger.log_value('loss', loss, epoch)
             logger.log_value('learning_rate', optimizer.param_groups[0]['lr'], epoch)
 
-        if epoch % opt.save_freq == 0:
-            save_file = os.path.join(
-                opt.save_folder, 'ckpt_epoch_{epoch}.pth'.format(epoch=epoch))
-            save_model(model, optimizer, opt, epoch, save_file)
+            if epoch % opt.save_freq == 0:
 
-        if ema:
-            copy_parameters_to_model(copy_of_model_parameters, model)
+                if ema:
+                    copy_of_model_parameters = copy_parameters_from_model(model)
+                    ema.copy_to(model.parameters())
+                save_file = os.path.join(
+                    opt.save_folder, 'ckpt_epoch_{epoch}.pth'.format(epoch=epoch))
+                save_model(model, optimizer, opt, epoch, save_file)
+                if ema:
+                    copy_parameters_to_model(copy_of_model_parameters, model)
 
+    if ema:
+        copy_of_model_parameters = copy_parameters_from_model(model)
+        ema.copy_to(model.parameters())
     # save the last model
-    save_file = os.path.join(
-        opt.save_folder, 'last.pth')
+    save_file = os.path.join(opt.save_folder, 'last.pth')
     save_model(model, optimizer, opt, opt.epochs, save_file)
-    # compare_models(model,model1)
 
-    
 if __name__ == '__main__':
     main()

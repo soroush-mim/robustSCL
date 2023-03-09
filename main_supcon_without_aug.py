@@ -181,9 +181,7 @@ def main():
             print('use adv training flag')
             break
 
-        if ema:
-            copy_of_model_parameters = copy_parameters_from_model(model)
-            ema.copy_to(model.parameters())
+        
         
         time2 = time.time()
         print('epoch {}, total time {:.2f}'.format(epoch, time2 - time1))
@@ -193,13 +191,20 @@ def main():
         logger.log_value('learning_rate', optimizer.param_groups[0]['lr'], epoch)
 
         if epoch % opt.save_freq == 0:
+            if ema:
+                copy_of_model_parameters = copy_parameters_from_model(model)
+                ema.copy_to(model.parameters())
+
             save_file = os.path.join(
                 opt.save_folder, 'ckpt_epoch_{epoch}.pth'.format(epoch=epoch))
             save_model(model, optimizer, opt, epoch, save_file)
 
-        if ema:
-            copy_parameters_to_model(copy_of_model_parameters, model)
+            if ema:
+                copy_parameters_to_model(copy_of_model_parameters, model)
 
+    if ema:
+        copy_of_model_parameters = copy_parameters_from_model(model)
+        ema.copy_to(model.parameters())
     # save the last model
     save_file = os.path.join(
         opt.save_folder, 'last.pth')
