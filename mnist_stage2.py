@@ -325,13 +325,13 @@ def main():
                 best_adv_acc = adv_val_acc
                 best_state = deepcopy(classifier.state_dict()) 
 
-            adv_loss_con, adv_val_acc_con = adv_validate_con(val_loader, model, classifier, con_criterion, opt, con_test_attack)
+            adv_val_acc_con = adv_validate_con(val_loader, model, classifier, con_criterion, opt, con_test_attack)
 
             #logging
             wandb.log({'learning_rate': optimizer.param_groups[0]['lr']}, step = epoch)
             wandb.log({'clean_val_loss': clean_loss , 'clean_val_acc':val_acc}, step = epoch)
             wandb.log({'adv_val_loss': adv_loss , 'adv_val_acc':adv_val_acc}, step = epoch)
-            wandb.log({'adv_val_loss_con': adv_loss_con , 'adv_val_acc_con':adv_val_acc_con}, step = epoch)
+            wandb.log({'adv_val_acc_con':adv_val_acc_con}, step = epoch)
 
             logger.log_value('clean loss', clean_loss, epoch)
             logger.log_value('adv loss', adv_loss, epoch)

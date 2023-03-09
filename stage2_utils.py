@@ -276,7 +276,7 @@ def adv_validate_con(val_loader, model, classifier, criterion, opt, attack):
     classifier.eval()
 
     batch_time = AverageMeter()
-    losses = AverageMeter()
+    # losses = AverageMeter()
     top1 = AverageMeter()
 
     end = time.time()
@@ -290,10 +290,10 @@ def adv_validate_con(val_loader, model, classifier, criterion, opt, attack):
         with torch.no_grad():
             features = model.encoder(input_adv)
             output = classifier(features)
-            loss = criterion(features, labels)
+            # loss = criterion(features, labels)
 
         # update metric
-        losses.update(loss.item(), bsz)
+        # losses.update(loss.item(), bsz)
         acc1 = accuracy(output, labels, topk=(1,))[0]
         top1.update(acc1[0], bsz)
 
@@ -304,10 +304,9 @@ def adv_validate_con(val_loader, model, classifier, criterion, opt, attack):
         if idx % opt.print_freq == 0:
             print('adv con Test: [{0}/{1}]\t'
                     'adv con Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                    'adv con Loss {loss.val:.4f} ({loss.avg:.4f})\t'
+                    #'adv con Loss {loss.val:.4f} ({loss.avg:.4f})\t'
                     'adv con Acc@1 {top1.val:.3f} ({top1.avg:.3f})'.format(
-                    idx, len(val_loader), batch_time=batch_time,
-                    loss=losses, top1=top1))
+                    idx, len(val_loader), batch_time=batch_time,top1=top1))
 
     print('adv con * Acc@1 {top1.avg:.3f}'.format(top1=top1))
-    return losses.avg, top1.avg
+    return top1.avg
