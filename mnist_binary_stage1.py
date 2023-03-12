@@ -88,10 +88,11 @@ def parse_option():
     
     parser.add_argument('--ema', action='store_true',
                         help='using exponential moving avg')
+    
     parser.add_argument('--ema_decay', type=float, default=0.996)
 
-    
-    
+    parser.add_argument('--V2', action='store_true', help='lfag for using V2 LOSS')
+
 
     opt = parser.parse_args()
 
@@ -183,8 +184,9 @@ def set_loader(opt):
     return train_loader
 
 def set_model(opt):
+    
     model = SupConCNN()
-    criterion = SupConLoss(temperature=opt.temp)#, V2=True)
+    criterion = SupConLoss(temperature=opt.temp, V2=opt.V2)
 
     if torch.cuda.is_available():
         if torch.cuda.device_count() > 1:
