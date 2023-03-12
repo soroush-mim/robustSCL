@@ -98,6 +98,8 @@ def parse_option():
 
     if opt.binary:
         opt.dataset = '{}_binary'.format(opt.dataset)
+
+    
     # set the path according to the environment
     if opt.data_folder is None:
         opt.data_folder = './datasets/'
@@ -114,6 +116,9 @@ def parse_option():
                opt.weight_decay, opt.batch_size, opt.temp, opt.epochs, opt.trial)
     if opt.binary:
         opt.model_name = '{}_binary'.format(opt.model_name)
+
+    if opt.V2:
+        opt.model_name = '{}_LossV2'.format(opt.model_name)
 
     if opt.cosine:
         opt.model_name = '{}_cosine'.format(opt.model_name)
@@ -184,7 +189,7 @@ def set_loader(opt):
     return train_loader
 
 def set_model(opt):
-    
+
     model = SupConCNN()
     criterion = SupConLoss(temperature=opt.temp, V2=opt.V2)
 
